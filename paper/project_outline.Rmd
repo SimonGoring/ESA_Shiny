@@ -1,0 +1,62 @@
+---
+title: "Outline and Methods"
+author: "Simon J. Goring, Sarah R. Supp"
+date: "March 16, 2015"
+output: html_document
+---
+
+This document acts as an outline for a project intended to highlight patterns of hiring in ecology based on publication in the [ECOLOG mailing list](https://listserv.umd.edu/archives/ecolog-l.html).
+
+Interdisciplinary research training is a stated goal for many graduate programs (e.g., IGERT, CHNS, SEES, MSB, LTER, NCEAS, SESYNC). Interdisciplinarity is increasingly important for collaborating to answer complex ecological/environmental questions that don't reside solely within a single field. Training students to across fields with diverse collaborative teams is an important goal for these programs, but are post-graduate positions that emphasize interdisciplinarity increasing at a similar rate? Only a fraction of graduate students obtaining a PhD will obtain a tenure-track position, but are tenure-track hiring committees seeking applicants with interdisciplinary training? Early career academics that change positions frequently (i.e., graduation, postdoc, soft-money positions), take on more costs in maintaining collaboraitve interdisciplinary projects (e.g. delays in productivity or publications) than established academics, but do so in the hopes that interdisciplinary training will benefit their odds of obtaining their desired (permanent) position in the future. 
+
+Ecolog-L is a listserve that essentially acts as a massive, unmoderated group blog (currently has XX,XXX subscribers, >20,000?) [run by David Inouye since the early 1990s](https://dynamicecology.wordpress.com/2013/02/22/whats-ecolog-l-for-and-how-can-we-make-it-better/) and hosted by the University of Maryland. It is [unofficially affiliated with the Ecological Society of America](http://esa.org/history/a-note-on-the-history-of-the-ecolog-listserv/), and is recognized as one of the largest aggregators for ecology grants, jobs, news, announcements, and discussion threads. Anyone can view posts, or register and contribute to posts for free. Jobs posted to Ecolog-L are almost certainly biased to jobs in the United States, but frequently include international listings as well. Here, we use posts from Ecolog-L from January 2000-January 2015 as representative of trends in graduate vs. tenure-track job market.
+
+The study aims to test whether:
+
+1. The number of positions that invoke interdisciplinary, transdisciplinary or cross-disciplinary research are increasing in Ecology, as reflected by advertisments on the ECOLOG mailing list.
+
+2. The number of interdisciplinary positions advertised is increasing faster for graduate students than it is for tenure track positions.
+
+We have preregistered the project on [GitHub](https://github.com/SimonGoring/ESA_2015_Interdisciplinary/blob/master/project_preregistration.Rmd).
+
+We have created a [Shiny app](https://github.com/SimonGoring/ESA_Shiny) to identify ECOLOG posts that represent job advertisements, and to categorize them based on career stage, income level, and interdisciplinarity. Columns to check in the web interface are as follows:
+
+| Is it a job? | Position      | Pay           | Key Word         | Uncertainty                 |
+| ------------ | ------------- |:-------------:| ----------------:| ---------------------------:|
+| Job Ad       | Faculty       | Scholarship   |Interdisciplinary | Some Uncertainty (Reviewer) |
+|              | Postdoc       | Small Stipend |                  |                             |
+|              | Grad Student  | Unpaid        |                  |                             |
+|              | Undergraduate |               |                  |                             |
+|              | Seasonal      |               |                  |                             |
+|              | Internship    |               |                  |                             |
+`Confirm`
+
+* If the post is not a job ad, `confirm` can simply be checked and move on to the next one.
+* If the post is a job ad, the first column should be checked. We consider graduate positions as a kind of job.
+* Position refers to the position being advertised. If the position is not listed (e.g. government or nonprofit), then don't check anything.
+* Pay refers to non-salary non-fellowship pay indicated in the job ad. If pay is not scholarship, small stipend, or unpaid, do not mark.
+* If the job ad specifically uses the words "interdisciplinary", "multi-discipline", "multidisciplinary", "transdisciplinary", or some variant, please check the box for `Interdisciplinary`.
+* If you are unsure about any of the categories for a specific post, please flag if by checking the "Some Uncertainty (Reviewer)" box in the last column.
+
+
+Key References
+===============
+Cummings and Keisler 2005 
+Eigenbrode et al. 2007
+Fisher et al. 2012
+[Goring et al. 2014](http://www.esajournals.org/doi/pdf/10.1890/120370)
+Hampton and Parker 2011
+Larivière and Gingras 2010
+Levitt and Thelwall 2008
+Levy et al. 2014
+Llerena and Meyer-Krahmer 2003. 
+Porter et al. 2012
+Scholes et al. 2014
+Shaw et al. 2015
+Uriarte et al. 2007
+Wuchty et al. 2007.
+
+
+
+
+
