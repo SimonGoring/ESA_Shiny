@@ -5,7 +5,7 @@ date: "March 16, 2015"
 output: html_document
 ---
 
-This document acts as an outline for a project intended to highlight patterns of hiring in ecology based on publication in the [ECOLOG mailing list](https://listserv.umd.edu/archives/ecolog-l.html).
+This document acts as an outline for a project intended to highlight patterns of academic hiring in ecology, particularly for interdisciplinary-focused positions, based on publication in the [ECOLOG mailing list](https://listserv.umd.edu/archives/ecolog-l.html).
 
 Interdisciplinary research training is a stated goal for many graduate programs (e.g., IGERT, CHNS, SEES, MSB, LTER, NCEAS, SESYNC). Interdisciplinarity is increasingly important for collaborating to answer complex ecological/environmental questions that don't reside solely within a single field. Training students to across fields with diverse collaborative teams is an important goal for these programs, but are post-graduate positions that emphasize interdisciplinarity increasing at a similar rate? Only a fraction of graduate students obtaining a PhD will obtain a tenure-track position, but are tenure-track hiring committees seeking applicants with interdisciplinary training? Early career academics that change positions frequently (i.e., graduation, postdoc, soft-money positions), take on more costs in maintaining collaboraitve interdisciplinary projects (e.g. delays in productivity or publications) than established academics, but do so in the hopes that interdisciplinary training will benefit their odds of obtaining their desired (permanent) position in the future. 
 
@@ -21,22 +21,26 @@ We have preregistered the project on [GitHub](https://github.com/SimonGoring/ESA
 
 We have created a [Shiny app](https://github.com/SimonGoring/ESA_Shiny) to identify ECOLOG posts that represent job advertisements, and to categorize them based on career stage, income level, and interdisciplinarity. Columns to check in the web interface are as follows:
 
-| Is it a job? | Position      | Pay           | Key Word         | Uncertainty                 |
-| ------------ | ------------- |:-------------:| ----------------:| ---------------------------:|
-| Job Ad       | Faculty       | Scholarship   |Interdisciplinary | Some Uncertainty (Reviewer) |
-|              | Postdoc       | Small Stipend |                  |                             |
-|              | Grad Student  | Unpaid        |                  |                             |
-|              | Undergraduate |               |                  |                             |
-|              | Seasonal      |               |                  |                             |
-|              | Internship    |               |                  |                             |
+| Job Type     | Job Qualifications | Pay           | Other             | Are You Sure?               |
+| ------------ | ------------------ |:-------------:| -----------------:| ---------------------------:|
+| Job Ad       | Faculty            | Salary/Hourly | Interdisciplinary | Something I'm not sure of   |
+| Grad Position| Postdoc+           | Scholarship   |                   |                             |
+| Internship   | Grad Student       | Small Stipend |                   |                             |
+| Seasonal     | Undergraduate      | Unpaid        |                   |                             |
+| Tenure Track |                    |               |                   |                             |
+| Postdoc      |                    |               |                   |                             |
+| Non-Academic |                    |               |                   |                             |
 `Confirm`
 
 * If the post is not a job ad, `confirm` can simply be checked and move on to the next one.
-* If the post is a job ad, the first column should be checked. We consider graduate positions as a kind of job.
-* Position refers to the position being advertised. If the position is not listed (e.g. government or nonprofit), then don't check anything.
-* Pay refers to non-salary non-fellowship pay indicated in the job ad. If pay is not scholarship, small stipend, or unpaid, do not mark.
-* If the job ad specifically uses the words "interdisciplinary", "multi-discipline", "multidisciplinary", "transdisciplinary", or some variant, please check the box for `Interdisciplinary`.
-* If you are unsure about any of the categories for a specific post, please flag if by checking the "Some Uncertainty (Reviewer)" box in the last column.
+* If the post is a job ad, the first box in the first column should be checked. We consider graduate positions as a kind of job.
+* Job Type refers to the position being advertised. If the position is not listed (e.g. government or nonprofit), then don't check anything. For example, a tenure-track faculty position would have "faculty" checked. A postdoc position would have "postdoc" checked. If the position is for a non-academic job (e.g. nonprofit), only check the seasonal, internship, or non-academic boxes, and not the academic level boxes (e.g. faculty, postdoc, grad, undergrad).
+* Job Qualifications refer to the level of education specified in the job ad. If not listed, please leave blank.
+* Pay refers to the type of pay, if any, indicated in the job ad. If not specified, please leave blank.
+* If the job ad specifically uses any, or clear variants, of the words "interdisciplinary", "multi-discipline", "multidisciplinary", "transdisciplinary", please check the box for `Interdisciplinary`.
+* If you are unsure about any of the categories for a specific post, please flag if by checking the "Something I'm not sure of" box in the last column. This is important because it will flag the post for further review or omission before analysis.
+
+The Shiny app will be hosted online where others can access it and data entry for the Ecolog files can essentially be crowd-sourced. The app takes the results from each column as vectors into a list, which can then be translated to a table of 1s and 0s to differentiate faculty vs. grad advertisements and the subest of those with an emphasis on interdisciplinarity. We can compile the results from the Shiny app in R for the main analyses.
 
 
 Key References
@@ -55,7 +59,6 @@ Scholes et al. 2014
 Shaw et al. 2015
 Uriarte et al. 2007
 Wuchty et al. 2007.
-
 
 
 
