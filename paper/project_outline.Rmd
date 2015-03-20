@@ -7,13 +7,13 @@ output: html_document
 
 This document acts as an outline for a project intended to highlight patterns of academic hiring in ecology, particularly for interdisciplinary-focused positions, based on publication in the [ECOLOG mailing list](https://listserv.umd.edu/archives/ecolog-l.html).
 
-Interdisciplinary research training is a stated goal for many graduate programs (e.g., IGERT, CHNS, SEES, MSB, LTER, NCEAS, SESYNC). Interdisciplinarity is increasingly important for collaborating to answer complex ecological/environmental questions that don't reside solely within a single field. Training students to across fields with diverse collaborative teams is an important goal for these programs, but are post-graduate positions that emphasize interdisciplinarity increasing at a similar rate? Only a fraction of graduate students obtaining a PhD will obtain a tenure-track position, but are tenure-track hiring committees seeking applicants with interdisciplinary training? Early career academics that change positions frequently (i.e., graduation, postdoc, soft-money positions), take on more costs in maintaining collaboraitve interdisciplinary projects (e.g. delays in productivity or publications) than established academics, but do so in the hopes that interdisciplinary training will benefit their odds of obtaining their desired (permanent) position in the future. 
+Interdisciplinary research training is a stated goal for many graduate programs (e.g., IGERT, CHNS, SEES, MSB, LTER, NCEAS, SESYNC). Interdisciplinarity is increasingly important for collaborating to answer complex ecological/environmental questions that don't reside solely within a single field. Training students to work across fields with diverse collaborative teams is an important goal for these programs, but are post-graduate positions that emphasize interdisciplinarity increasing at a similar rate? Only a fraction of graduate students obtaining a PhD will obtain a tenure-track position, but are tenure-track hiring committees seeking applicants with interdisciplinary training? Early career academics that change positions frequently (i.e., graduation, postdoc, soft-money positions), take on more costs in maintaining collaboraitve interdisciplinary projects (e.g. delays in productivity or publications) than established academics, but do so in the hopes that interdisciplinary training will benefit their odds of obtaining their desired (permanent) position in the future. 
 
 Ecolog-L is a listserve that essentially acts as a massive, unmoderated group blog (currently has XX,XXX subscribers, >20,000?) [run by David Inouye since the early 1990s](https://dynamicecology.wordpress.com/2013/02/22/whats-ecolog-l-for-and-how-can-we-make-it-better/) and hosted by the University of Maryland. It is [unofficially affiliated with the Ecological Society of America](http://esa.org/history/a-note-on-the-history-of-the-ecolog-listserv/), and is recognized as one of the largest aggregators for ecology grants, jobs, news, announcements, and discussion threads. Anyone can view posts, or register and contribute to posts for free. Jobs posted to Ecolog-L are almost certainly biased to jobs in the United States, but frequently include international listings as well. Here, we use posts from Ecolog-L from January 2000-January 2015 as representative of trends in graduate vs. tenure-track job market.
 
 The study aims to test whether:
 
-1. The number of positions that invoke interdisciplinary, transdisciplinary or cross-disciplinary research are increasing in Ecology, as reflected by advertisments on the ECOLOG mailing list.
+1. The number of positions that invoke interdisciplinary, transdisciplinary or cross-disciplinary research are increasing in Ecology, as reflected by advertisements on the ECOLOG mailing list.
 
 2. The number of interdisciplinary positions advertised is increasing faster for graduate students than it is for tenure track positions.
 
@@ -37,7 +37,7 @@ We have created a [Shiny app](https://github.com/SimonGoring/ESA_Shiny) to ident
 * Job Type refers to the position being advertised. If the position is not listed (e.g. government or nonprofit), then don't check anything. For example, a tenure-track faculty position would have "faculty" checked. A postdoc position would have "postdoc" checked. If the position is for a non-academic job (e.g. nonprofit), only check the seasonal, internship, or non-academic boxes, and not the academic level boxes (e.g. faculty, postdoc, grad, undergrad).
 * Job Qualifications refer to the level of education specified in the job ad. If not listed, please leave blank.
 * Pay refers to the type of pay, if any, indicated in the job ad. If not specified, please leave blank.
-* If the job ad specifically uses any, or clear variants, of the words "interdisciplinary", "multi-discipline", "multidisciplinary", "transdisciplinary", please check the box for `Interdisciplinary`.
+* If the job ad specifically uses any, or clear variants, of the words "interdisciplinary", "multi-discipline", "multidisciplinary", "transdisciplinary", "cross disciplinary", or "pluri-disciplinary", please check the box for `Interdisciplinary`.
 * If you are unsure about any of the categories for a specific post, please flag if by checking the "Something I'm not sure of" box in the last column. This is important because it will flag the post for further review or omission before analysis.
 
 The Shiny app will be hosted online where others can access it and data entry for the Ecolog files can essentially be crowd-sourced. The app takes the results from each column as vectors into a list, which can then be translated to a table of 1s and 0s to differentiate faculty vs. grad advertisements and the subest of those with an emphasis on interdisciplinarity. We can compile the results from the Shiny app in R for the main analyses.
@@ -45,19 +45,25 @@ The Shiny app will be hosted online where others can access it and data entry fo
 
 Key References
 ===============
+[Basche et al. 2014](http://www.jswconline.org/content/69/6/176A.extract)
+[Bestelmeyer et al. 2015](http://www.esajournals.org/doi/abs/10.1890/140130)
+[Bik et al. 2014](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001884)
+[Cianelli et al. 2014](http://icesjms.oxfordjournals.org/content/early/2014/04/29/icesjms.fsu067)
 Cummings and Keisler 2005 
 Eigenbrode et al. 2007
 Fisher et al. 2012
+[Gewin 2014](http://www.nature.com/naturejobs/science/articles/10.1038/nj7509-371a)
 [Goring et al. 2014](http://www.esajournals.org/doi/pdf/10.1890/120370)
 Hampton and Parker 2011
 Larivière and Gingras 2010
 Levitt and Thelwall 2008
-Levy et al. 2014
+[Levy et al. 2014](http://www.esajournals.org/doi/abs/10.1890/130019)
 Llerena and Meyer-Krahmer 2003. 
 Porter et al. 2012
-Scholes et al. 2014
+[Scholes et al. 2014](http://www.esajournals.org/doi/abs/10.1890/0012-9623-95.4.435)
 Shaw et al. 2015
 Uriarte et al. 2007
+[Walsh et al. 2015](http://ascelibrary.org/doi/abs/10.1061/(ASCE)WR.1943-5452.0000514)
 Wuchty et al. 2007.
 
 
