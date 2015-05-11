@@ -1,13 +1,30 @@
 #  Load the message data and evaluation data to date:
+
 all.messages <- readRDS('data/all.messages.RDS')
-evals        <- readRDS('data/evals.RDS')
+evals        <- list(readRDS('data/evals.RDS'))
+things       <- readRDS('data/secret.RDS')
 
 #  Extract the messages and subject headings:
 messages <- unlist(lapply(all.messages, function(x)lapply(x, function(x)ifelse(length(x)>1,x[[2]],NA))))
 subjects <- unlist(lapply(all.messages, function(x)lapply(x, function(x)ifelse(length(x)>1,x[[1]],NA))))
 
-messages <- c(messages, 'Click confirm to start')
+messages <- c(messages, readChar('data/initialmessage.txt', file.info('data/initialmessage.txt')$size))
 subjects <- c(subjects, '')
+
+change.words <- function(x){
+  x <- gsub('interdisciplinary', '<b><u>interdisciplinary</u></b>', x)
+  x <- gsub('multidisciplinary', '<b><u>multidisciplinary</u></b>', x)
+  x <- gsub('transdisciplinary', '<b><u>transdisciplinary</u></b>', x)
+
+  x <- gsub('Interdisciplinary', '<b><u>Interdisciplinary</u></b>', x)
+  x <- gsub('Multidisciplinary', '<b><u>Multidisciplinary</u></b>', x)
+  x <- gsub('Transdisciplinary', '<b><u>Transdisciplinary</u></b>', x)
+  
+  x <- gsub('\\n', '<br/>', x)
+  
+  return(x)
+}
+
 
 shinyServer(function(input, output, session) {
 
@@ -37,13 +54,14 @@ shinyServer(function(input, output, session) {
       new$flag <- flag
 
       flag <<- 'a'
-      evals <<- list(evals, new)
+      evals[[length(evals)+1]] <<- new
       saveRDS(evals, file=paste0('data/evals',randVal, dateTime,'.RDS'))
 
       updateCheckboxGroupInput(session, "jobType",
                          choices = list("Job Ad" = 1, "Grad Position" = 2,
                                         "Internship" = 3, "Seasonal" = 4,
-                                        "Tenure Track" = 5, "Postdoc" = 6),
+                                        "Tenure Track" = 5, "Postdoc" = 6,
+                                        "Not an Ad" = 7),
                          selected = NULL)
       updateCheckboxGroupInput(session, "jobPay",
                          choices = list("Salary/Hourly" = 1, "Scholarship" = 2,
@@ -61,8 +79,7 @@ shinyServer(function(input, output, session) {
                         selected = NULL)
       
       HTML(paste0('Msg:', values(), ' - ', subjects[[values()]],'<br/>',
-                          gsub('[inter|multi|trans]disciplin*', '<b><u>interdisciplinary</u></b>', 
-                               messages[[values()]])))
+                          change.words(messages[[values()]])))
     })
   })
 

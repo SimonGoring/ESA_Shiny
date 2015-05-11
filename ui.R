@@ -1,12 +1,13 @@
 shinyUI(pageWithSidebar(
-  headerPanel('Download Example'),
+  headerPanel('Classifying ECOLOG'),
   sidebarPanel(
     fixedRow(
       column(4, checkboxGroupInput("jobType", 
                          label = h3("Job Type"), 
                          choices = list("Job Ad" = 1, "Grad Position" = 2,
                                         "Internship" = 3, "Seasonal" = 4,
-                                        "Tenure Track" = 5, "Postdoc" = 6)),
+                                        "Tenure Track" = 5, "Postdoc" = 6,
+                                        "Not an Ad" = 7)),
              checkboxGroupInput("jobPay", 
                                 label = h3("Job Pay"), 
                                 choices = list("Salary/Hourly" = 1, "Scholarship" = 2,
