@@ -26,6 +26,7 @@ shinyUI(pageWithSidebar(
              )),
               
     actionButton(inputId='click', label='Confirm')),
+    
   mainPanel(
     htmlOutput('table')
   )

@@ -22,13 +22,16 @@ change.words <- function(x){
   
   x <- gsub('\\n', '<br/>', x)
   
-  return(x)
+  x <- paste0(x, '<br/>', readChar('data/footer.txt', file.info('data/footer.txt')$size))
+  
+  return(iconv(enc2utf8(x), sub = 'byte'))
 }
 
 
 shinyServer(function(input, output, session) {
 
   #  The 'flag' starts out as 'x'
+  counter <<- 0
   flag <<- 'x'
   randVal <- formatC(round(runif(1,0,1000000),0), width = 6, format = "d", flag = "0")
   dateTime <- gsub('[ |:]', '_', as.character(Sys.time()))
@@ -37,9 +40,17 @@ shinyServer(function(input, output, session) {
   values <- reactive({
     input$click
     isolate({if(flag == 'x'){
-      return(length(messages))
+        return(length(messages))
       }
-      return(sample(1:length(subjects), 1))})
+      
+      tester <- sample(1:length(subjects), 1)  
+      
+      while(is.na(messages[tester])){
+        tester <- sample(1:length(subjects), 1)  
+      }
+      
+      return(tester)})
+    
     })
   
   output$table <- renderUI({
@@ -47,7 +58,7 @@ shinyServer(function(input, output, session) {
       tail(evals)
     }
     isolate({  
-      
+      counter <- counter + 1
       new <- isolate(list(values(), input$jobType, input$jobPay, 
                                      input$jobQuals, input$interDiscip,
                                      input$certainty))
