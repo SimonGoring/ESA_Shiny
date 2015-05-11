@@ -24,7 +24,7 @@ change.words <- function(x){
   
   x <- paste0(x, '<br/>', readChar('data/footer.txt', file.info('data/footer.txt')$size))
   
-  return(x)
+  return(iconv(enc2utf8(x), sub = 'byte'))
 }
 
 
