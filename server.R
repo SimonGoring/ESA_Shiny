@@ -4,6 +4,7 @@ all.messages <- readRDS('data/all.messages.RDS')
 evals        <- list(readRDS('data/evals.RDS'))
 things       <- readRDS('data/secret.RDS')
 not_jobs     <- readRDS('data/not_jobs.RDS')
+pred_good    <- readRDS('data/pred_good.RDS')
 
 #  Extract the messages and subject headings:
 messages <- unlist(lapply(all.messages, function(x)lapply(x, function(x)ifelse(length(x)>1,x[[2]],NA))))
@@ -44,8 +45,9 @@ shinyServer(function(input, output, session) {
         return(length(messages))
       }
       
-      samples <- (1:length(subjects))[!(1:length(subjects))%in%not_jobs]
-      tester <- sample(samples, 1)  
+      samples <- (1:length(subjects))[!(1:length(subjects))%in%(not_jobs+1)]
+      tester <- sample(samples, 1, 
+                       prob = c(1,pred_good)[!(1:length(subjects))%in%(not_jobs+1)]^2)
       
       while(is.na(messages[tester])){
         tester <- sample(samples, 1)  
