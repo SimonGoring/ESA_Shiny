@@ -30,7 +30,7 @@ tenure_track <- na.omit(data.frame(tt.job = factor(all_runs$jt_tt==1),
 interdiscip  <- na.omit(data.frame(interd = factor(all_runs$inter==1),
                                    dtm.s99[all_runs$msg,]>0))
 
-dtm.pred <- data.frame(dtm.s99[all_runs$msg,]>0)
+dtm.pred <- data.frame(dtm.s99>0)
 
 colnames(dtm.s99)[432] <- "driver.s"
 colnames(dtm.s99)[472] <- "else."
@@ -53,7 +53,11 @@ Results
 
 Once we pull the messages from ECOLOG we find that we obtain `r nrow(dtm.s99) - sum(rowSums(dtm.s99) == 0)` messages.  We clean the text in these messages to remove punctuation, extra whitespace, HTML tags, stop words and numbers using the `tm_map` function from the `tm` package [@REF].  This leaves us with a set of `r ncol(dtm.s99)` terms.
 
-The frequency of terms in the ECOLOG corpus follows a log distribution.  The most frequent terms (will, n=82355; research, n=61951; university, n=38996; field, n=35004; ecology, n=33768) have much higher frequencies than the mean (u_terms_ = 2615).  
+The frequency of terms in the ECOLOG corpus follows a log distribution.  The most frequent terms (will, n=82355; research, n=61951; university, n=38996; field, n=35004; ecology, n=33768) have much higher frequencies than the mean (u_terms_ = 2615).
+
+When we look at the key terms that identify tenure track jobs it seems fairly straightforward: "Teaching", "tenuretrack", "professor", "assistant", "department", "position", "applications", "undergraduate", "faculty" and "successful".  Interestingly, there's lots of cross-over with positions that are interdisciplinary in general. The key term in this case is "interdisciplinary".  We're really looking at interdisciplinary jobs here, so it's no surprise that terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) and "phd" (rank = 6) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a much higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
+
+
 
 Discussion
 ===========
