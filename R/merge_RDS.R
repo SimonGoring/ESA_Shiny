@@ -82,7 +82,10 @@ parse_files <- function(x){
   }
   input[[1]] <- NULL
   
-  do.call(rbind.data.frame, lapply(input, parse_lists))
+  output_frame <- do.call(rbind.data.frame, lapply(input, parse_lists))
+  output_frame[,1] <- c(NA, output_frame[-nrow(output_frame),1])
+  
+  output_frame
 }
 
 
