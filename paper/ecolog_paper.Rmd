@@ -30,6 +30,8 @@ tenure_track <- na.omit(data.frame(tt.job = factor(all_runs$jt_tt==1),
 interdiscip  <- na.omit(data.frame(interd = factor(all_runs$inter==1),
                                    dtm.s99[all_runs$msg,]>0))
 
+dtm.pred <- data.frame(dtm.s99[all_runs$msg,]>0)
+
 colnames(dtm.s99)[432] <- "driver.s"
 colnames(dtm.s99)[472] <- "else."
 colnames(dtm.s99)[627] <- "function."
@@ -39,8 +41,10 @@ colnames(dtm.s99)[1017] <- "next."
 is.job.rf  <- randomForest(tt.job ~ ., data = tenure_track, sampsize = c(30, 30))
 is.int.rf <- randomForest(interd ~ ., data = interdiscip, sampsize = c(30, 30))
 
-# predict_tt <- predict(is.job.rf, dtm.s99) - this has a high error rate!!
-# predict_in <- predict(is.int.rf, dtm.s99) - better than above, but still bad
+# predict_tt <- predict(is.job.rf, dtm.pred) # this has a high error rate!!
+# predict_in <- predict(is.int.rf, dtm.pred) # better than above, but still bad
+# pred_good <- (as.numeric(predict_tt) + as.numeric(predict_in))^2
+# saveRDS(pred_good, file = 'data/pred_good.RDS')
 
 ```
 
