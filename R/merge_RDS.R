@@ -93,5 +93,6 @@ all_runs <- na.omit(do.call(rbind.data.frame, lapply(all_RDS, parse_files)))
 
 not_job <- all_runs$msg[which(all_runs$jt_na == TRUE)]
 
+saveRDS(object = all_RDS, file = 'data/RDS_list.RDS')
 saveRDS(object = not_job, file = 'data/not_jobs.RDS')
 saveRDS(object = all_runs, file = 'data/responses.RDS')

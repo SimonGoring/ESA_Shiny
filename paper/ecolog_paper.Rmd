@@ -3,53 +3,44 @@ title: "Interdiscplinary ECOLOG"
 author: "Simon Goring"
 date: "July 29, 2015"
 output: pdf_document
+  toc: yes
+  toc_depth: 3
 ---
 
-How have job ads on Ecolog changed over time?
+#Training and Hiring Patterns for Interdisciplinary Ecologists
 
-Methods
-=========
+Simon J. Goring^1^
+
+Sarah Supp^2^
+
+
+^1^ Department of Geography, University of WIsconsin - Madison
+
+^2^ 
+
+Corresponding author: Simon Goring - goring@wisc.edu
+
+##Abstract
+
+**
+
+##Introduction
+
+##Methods
+
 
 We used a web scraper written in R [@RBase] to read messages from ECOLOG from the years 2000 - 2015. This program pulled the message, message date and message subject for each ECOLOG posting.  Messages from ECOLOG were then transformed into a matrix using text analysis tools in the `tm` package for R [@tmcitation].
 
-Once the matrix was generated we classified a number of records by hand using a Shiny application.  Messages were identified as job ads, classified into graduate, postdoctoral, and tenure track positions, and then also classified as interdisciplinary or not.  Based on the surveyed messages we built a model using Boosted Regression Trees to classify messages as tenure track jobs and graduate positions, and to test whether messages indicate interdisciplinarity.  Based on the model constructed using the BRT we then predict the class of the remaining messages to build a time series of job ads
+Once the matrix was generated we classified a number of records by hand using a Shiny application.  Messages were identified as job ads, classified into graduate, postdoctoral, and tenure track positions, and then also classified as interdisciplinary or not.  Based on the surveyed messages we built a model using a random forest to classify messages as tenure track jobs, postdoctoral positions and graduate positions, and to test whether messages indicate interdisciplinarity.  Based on the model constructed using the BRT we then predict the class of the remaining messages to build a time series of job ads
 
 ```{r}
 
-source('../R/load_term.R')
-
-dtm.s99 <- as.data.frame(as.matrix(dtm.s99))
-
-# To build the model:
-library(randomForest)
-
-all_runs <- readRDS(file = 'data/responses.RDS')
-
-tenure_track <- na.omit(data.frame(tt.job = factor(all_runs$jt_tt==1),
-                                   dtm.s99[all_runs$msg,]>0))
-interdiscip  <- na.omit(data.frame(interd = factor(all_runs$inter==1),
-                                   dtm.s99[all_runs$msg,]>0))
-
-dtm.pred <- data.frame(dtm.s99>0)
-
-colnames(dtm.s99)[432] <- "driver.s"
-colnames(dtm.s99)[472] <- "else."
-colnames(dtm.s99)[627] <- "function."
-colnames(dtm.s99)[1017] <- "next."
-
-#  Models are very slow!
-is.job.rf  <- randomForest(tt.job ~ ., data = tenure_track, sampsize = c(30, 30))
-is.int.rf <- randomForest(interd ~ ., data = interdiscip, sampsize = c(30, 30))
-
-# predict_tt <- predict(is.job.rf, dtm.pred) # this has a high error rate!!
-# predict_in <- predict(is.int.rf, dtm.pred) # better than above, but still bad
-# pred_good <- (as.numeric(predict_tt) + as.numeric(predict_in))^2
-# saveRDS(pred_good, file = 'data/pred_good.RDS')
+source('R/load_term.R')
+source('R/load_models.R')
 
 ```
 
-Results
-===========
+##Results
 
 Once we pull the messages from ECOLOG we find that we obtain `r nrow(dtm.s99) - sum(rowSums(dtm.s99) == 0)` messages.  We clean the text in these messages to remove punctuation, extra whitespace, HTML tags, stop words and numbers using the `tm_map` function from the `tm` package [@REF].  This leaves us with a set of `r ncol(dtm.s99)` terms.
 
@@ -59,8 +50,7 @@ When we look at the key terms that identify tenure track jobs it seems fairly st
 
 
 
-Discussion
-===========
+##Discussion
 
-References
-===========
+
+##References
