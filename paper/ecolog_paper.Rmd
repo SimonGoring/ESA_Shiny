@@ -1,10 +1,18 @@
 ---
 title: "Interdiscplinary ECOLOG"
-author: "Simon Goring"
-date: "July 29, 2015"
-output: pdf_document
-  toc: yes
-  toc_depth: 3
+author: "Simon Goring & Sarah Supp"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  pdf_document:
+    pandoc_args: -V geometry:vmargin=1in -V geometry:hmargin=1in
+  md_document:
+    variant: markdown_github
+  word_document:
+    fig_height: 6
+    fig_width: 6
+csl: ecology.csl
+pandoc_args: -H margins.sty
+bibliography: goringsupp_references.bib
 ---
 
 #Training and Hiring Patterns for Interdisciplinary Ecologists
@@ -16,24 +24,26 @@ Sarah Supp^2^
 
 ^1^ Department of Geography, University of WIsconsin - Madison
 
-^2^ 
+^2^ School of Biology and Ecology, University of Maine
 
 Corresponding author: Simon Goring - goring@wisc.edu
 
 ##Abstract
 
-**
+**It is clear that there are significant changes in hiring and training among ecologists and the institutionals where ecology is practiced. **
 
 ##Introduction
+
+Interdisciplinarity has been receiving increased attention in ecology, both as a method of studying key processes, but also as a subject of interest in and of itself. Part of this increased attention is the result of the increasingly complex set of problems facing modern ecologists, intertwined as they are with land use change, climate change, changes in biogeophysical processes, and human interactions (whole raft of references). To help support the increased need for interdisciplinary approaches in research a number of training programs and funding sources have been structured to address training at the graduate and post-doctoral level.  These include SESYNC, IGERT, CIEE in Canada and other stuff. . . But given the challenges of interdisciplinary research (references)   
 
 ##Methods
 
 
-We used a web scraper written in R [@RBase] to read messages from ECOLOG from the years 2000 - 2015. This program pulled the message, message date and message subject for each ECOLOG posting.  Messages from ECOLOG were then transformed into a matrix using text analysis tools in the `tm` package for R [@tmcitation].
+We used a web scraper written in R [@RBase] to read messages from ECOLOG from the years 2000 - 2015. This program pulled the message, message date and message subject for each ECOLOG posting.  Messages from ECOLOG were then transformed into a matrix using text analysis tools in the `tm` package for R [@feinerer2012tm;@meyer2008text].
 
 Once the matrix was generated we classified a number of records by hand using a Shiny application.  Messages were identified as job ads, classified into graduate, postdoctoral, and tenure track positions, and then also classified as interdisciplinary or not.  Based on the surveyed messages we built a model using a random forest to classify messages as tenure track jobs, postdoctoral positions and graduate positions, and to test whether messages indicate interdisciplinarity.  Based on the model constructed using the BRT we then predict the class of the remaining messages to build a time series of job ads
 
-```{r}
+```{r load_things, echo=FALSE, message=FALSE, results='hide', warning =FALSE}
 
 source('R/load_term.R')
 source('R/load_models.R')
@@ -47,8 +57,6 @@ Once we pull the messages from ECOLOG we find that we obtain `r nrow(dtm.s99) - 
 The frequency of terms in the ECOLOG corpus follows a log distribution.  The most frequent terms (will, n=82355; research, n=61951; university, n=38996; field, n=35004; ecology, n=33768) have much higher frequencies than the mean (u_terms_ = 2615).
 
 When we look at the key terms that identify tenure track jobs it seems fairly straightforward: "Teaching", "tenuretrack", "professor", "assistant", "department", "position", "applications", "undergraduate", "faculty" and "successful".  Interestingly, there's lots of cross-over with positions that are interdisciplinary in general. The key term in this case is "interdisciplinary".  We're really looking at interdisciplinary jobs here, so it's no surprise that terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) and "phd" (rank = 6) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a much higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
-
-
 
 ##Discussion
 
