@@ -51,7 +51,7 @@ if(any(!curr_RDS %in% old_RDS)){
                           predict_pd,
                           predict_gr,
                           predict_in)
-  
+    
   confusion <- apply(r_preds[,2:4], 1, function(x)sum(as.logical(x)))
 
   pred_good <- (confusion * as.logical(r_preds$predict_in) * 2)^2 + 1
