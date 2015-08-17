@@ -1,66 +1,119 @@
 ---
 title: "Interdiscplinary ECOLOG"
-author: "Simon Goring"
-date: "July 29, 2015"
-output: pdf_document
+author: "Simon Goring & Sarah Supp"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  pdf_document:
+    pandoc_args: -V geometry:vmargin=1in -V geometry:hmargin=1in
+  md_document:
+    variant: markdown_github
+  word_document:
+    fig_height: 6
+    fig_width: 6
+csl: ecology.csl
+pandoc_args: -H margins.sty
+bibliography: goringsupp_references.bib
 ---
 
-How have job ads on Ecolog changed over time?
+#Training and Hiring Patterns for Interdisciplinary Ecologists
 
-Methods
-=========
+Simon J. Goring^1^
 
-We used a web scraper written in R [@RBase] to read messages from ECOLOG from the years 2000 - 2015. This program pulled the message, message date and message subject for each ECOLOG posting.  Messages from ECOLOG were then transformed into a matrix using text analysis tools in the `tm` package for R [@tmcitation].
+Sarah Supp^2^
 
-Once the matrix was generated we classified a number of records by hand using a Shiny application.  Messages were identified as job ads, classified into graduate, postdoctoral, and tenure track positions, and then also classified as interdisciplinary or not.  Based on the surveyed messages we built a model using Boosted Regression Trees to classify messages as tenure track jobs and graduate positions, and to test whether messages indicate interdisciplinarity.  Based on the model constructed using the BRT we then predict the class of the remaining messages to build a time series of job ads
 
-```{r}
+^1^ Department of Geography, University of WIsconsin - Madison
 
-source('../R/load_term.R')
+^2^ School of Biology and Ecology, University of Maine
 
-dtm.s99 <- as.data.frame(as.matrix(dtm.s99))
+Corresponding author: Simon Goring - goring@wisc.edu
 
-# To build the model:
-library(randomForest)
+##Abstract
 
-all_runs <- readRDS(file = 'data/responses.RDS')
+**It is clear that there are significant changes in hiring and training among ecologists and the institutionals where ecology is practiced. **
 
-tenure_track <- na.omit(data.frame(tt.job = factor(all_runs$jt_tt==1),
-                                   dtm.s99[all_runs$msg,]>0))
-interdiscip  <- na.omit(data.frame(interd = factor(all_runs$inter==1),
-                                   dtm.s99[all_runs$msg,]>0))
+##Introduction
 
-dtm.pred <- data.frame(dtm.s99>0)
+Interdisciplinarity has been receiving increased attention in ecology, both as a method of studying key processes, but also as a subject of interest in and of itself. Part of this increased attention is the result of the increasingly complex set of problems facing modern ecologists, intertwined as they are with land use change, climate change, changes in biogeophysical processes, and human interactions (whole raft of references). To help support the increased need for interdisciplinary approaches in research a number of training programs and funding sources have been structured to address training at the graduate and post-doctoral level.  These include SESYNC, IGERT, CIEE in Canada and other stuff. . . But given the challenges of interdisciplinary research (references)   
 
-colnames(dtm.s99)[432] <- "driver.s"
-colnames(dtm.s99)[472] <- "else."
-colnames(dtm.s99)[627] <- "function."
-colnames(dtm.s99)[1017] <- "next."
+##Methods
 
-#  Models are very slow!
-is.job.rf  <- randomForest(tt.job ~ ., data = tenure_track, sampsize = c(30, 30))
-is.int.rf <- randomForest(interd ~ ., data = interdiscip, sampsize = c(30, 30))
 
-# predict_tt <- predict(is.job.rf, dtm.pred) # this has a high error rate!!
-# predict_in <- predict(is.int.rf, dtm.pred) # better than above, but still bad
-# pred_good <- (as.numeric(predict_tt) + as.numeric(predict_in))^2
-# saveRDS(pred_good, file = 'data/pred_good.RDS')
+We used a web scraper written in R [@RBase] to read messages from ECOLOG from the years 2000 - 2015. This program pulled the message, message date and message subject for each ECOLOG posting.  Messages from ECOLOG were then transformed into a matrix using text analysis tools in the `tm` package for R [@feinerer2012tm;@meyer2008text].
+
+Once the matrix was generated we classified a number of records by hand using a Shiny application.  Messages were identified as job ads, classified into graduate, postdoctoral, and tenure track positions, and then also classified as interdisciplinary or not.  Based on the surveyed messages we built a model using a random forest to classify messages as tenure track jobs, postdoctoral positions and graduate positions, and to test whether messages indicate interdisciplinarity.  Based on the model constructed using the BRT we then predict the class of the remaining messages to build a time series of job ads
+
+```{r load_things, echo=FALSE, message=FALSE, results='hide', warning =FALSE}
+library(ggplot2)
+library(mgcv)
+  
+myw2 <- expand.grid(week = 1:5, month = 1:12, year = 2000:2015)
+
+source('R/load_term.R')
+source('R/load_models.R')
 
 ```
 
-Results
-===========
+##Results
 
 Once we pull the messages from ECOLOG we find that we obtain `r nrow(dtm.s99) - sum(rowSums(dtm.s99) == 0)` messages.  We clean the text in these messages to remove punctuation, extra whitespace, HTML tags, stop words and numbers using the `tm_map` function from the `tm` package [@REF].  This leaves us with a set of `r ncol(dtm.s99)` terms.
 
-The frequency of terms in the ECOLOG corpus follows a log distribution.  The most frequent terms (will, n=82355; research, n=61951; university, n=38996; field, n=35004; ecology, n=33768) have much higher frequencies than the mean (u_terms_ = 2615).
+The frequency of terms in the ECOLOG corpus follows a log distribution.  The most frequent terms (will, n=`r colSums(dtm.s99)["will"]`82355; research, n=61951; university, n=38996; field, n=35004; ecology, n=33768) have much higher frequencies than the mean (u_terms_ = 2615).
 
 When we look at the key terms that identify tenure track jobs it seems fairly straightforward: "Teaching", "tenuretrack", "professor", "assistant", "department", "position", "applications", "undergraduate", "faculty" and "successful".  Interestingly, there's lots of cross-over with positions that are interdisciplinary in general. The key term in this case is "interdisciplinary".  We're really looking at interdisciplinary jobs here, so it's no surprise that terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) and "phd" (rank = 6) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a much higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
 
+```{r}
+
+rep.row<-function(x,n){
+   matrix(rep(x,each=n),nrow=n)
+}
+
+weeks <- do.call(rbind.data.frame, lapply(1:length(all.messages),function(x)rep.row(myw2[x,],length(all.messages[[x]]))))
+
+r_preds$time <- unlist(weeks[,3]) + (unlist(weeks[,2]) + unlist(weeks[,1])/4)/12
+
+r_preds <- subset(r_preds, time <= 2015)
+
+interdiscip_gam <- gam(as.logical(predict_in)~s(time, k = 120), 
+                       data = r_preds, family='binomial')
+inter_tt_gam <- gam(I(as.logical(predict_in)&as.logical(predict_tt))~s(time, k = 120), 
+                       data = r_preds, family='binomial')
+inter_gg_gam <- gam(I(as.logical(predict_in)&as.logical(predict_gr))~s(time, k = 120), 
+                       data = r_preds, family='binomial')
+inter_pd_gam <- gam(I(as.logical(predict_in)&as.logical(predict_pd))~s(time, k = 120),
+                       data = r_preds, family='binomial')
+
+inter_models <- list(inter_gg_gam,
+                     inter_pd_gam,
+                     inter_tt_gam)
+
+plot_gam <- do.call(rbind.data.frame, 
+                    lapply(1:3, function(x){
+                      data.frame(time = r_preds$time,
+                                 pred = exp(predict(inter_models[[x]])),
+                                 class = x)}))
+
+# plot_gam <- data.frame(time = r_preds$time,
+#                        value= c(predict(inter_gg_gam, type = 'response'),
+#                                 predict(inter_pd_gam, type = 'response'),
+#                                 predict(inter_tt_gam, type = 'response')),
+#                        class = rep(c('Interdisciplinary',
+#                                      'Graduate',
+#                                      'Postdoc',
+#                                      'Tenure Track'), 
+#                                    each = length(predict(inter_gg_gam))))
+
+ggplot(subset(plot_gam, time <= 2015), 
+       aes(x = time, y = pred, color = factor(class))) +
+  geom_path() +
+  theme_bw() +
+  coord_cartesian(xlim=c(2000, 2015), ylim=c(0, 0.6)) +
+  xlab('Year of posting') +
+  ylab('Proportional Postings') +
+  theme(axis.title = element_text(family = 'serif', face = 'bold', size = 18))
+
+```
+##Discussion
 
 
-Discussion
-===========
-
-References
-===========
+##References
