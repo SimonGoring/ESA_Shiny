@@ -94,12 +94,16 @@ if(any(!curr_RDS %in% old_RDS)){
   # posts get values twice as much as others), and then squares this to
   # more highly prioritize these posts, to improve classification.
   
-  pred_good <- (confusion * (as.logical(r_preds$predict_in)+1) * 2)^2 + 1
+  #pred_good <- (confusion * (as.logical(r_preds$predict_in)+1) * 2)^2 + 1
+  pred_good <- ((1/apply(predict_al,1,max)^2)/sum(1/apply(predict_al,1,max)^2))
   
   saveRDS(pred_good, file = 'data/pred_good.RDS')
   saveRDS(r_preds,   file = 'data/predictions.RDS')
   saveRDS(rf_models, file = 'data/models.RDS')
+  
 } else{
+  
   r_preds   <- readRDS('data/predictions.RDS')
   rf_models <- readRDS('data/models.RDS')
+
 }
