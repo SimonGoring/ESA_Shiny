@@ -1,4 +1,16 @@
 #  Building the random forest models:
+#  This file loads all RDS files following the system file pattern as defined
+#  in the shiny scripts (server.R and ui.R).
+
+#  During this process we build the term matrix for the top 99% of terms
+#  all run in the `load_term.R` file.
+
+#  Using the hand coded Ecolog posts we then build RF models for the individual 
+#  messages.  This is partly to facilitate hand coding, since mesages with a 
+#  high confusion rate are given a high likelihood of being selected for hand
+#  coding in the Shiny app.
+
+
 
 curr_RDS <- list.files('data', pattern = '*evals[0-9][0-9]*', full.names = TRUE)
 old_RDS  <- readRDS('data/RDS_list.RDS')
@@ -26,6 +38,21 @@ if(any(!curr_RDS %in% old_RDS)){
   interdiscip  <- na.omit(data.frame(interd = factor(all_runs$inter==1),
                                      dtm.s99[all_runs$msg,]>0))
   
+  full_class <- rep(NA, nrow(all_runs))
+  full_class[all_runs$jt_tt & !(all_runs$jt_pd & all_runs$jt_gp &all_runs$inter)] <- "TT"
+  full_class[all_runs$jt_tt & all_runs$inter & !(all_runs$jt_pd & all_runs$jt_gp)] <- "TT_Int"
+  
+  full_class[all_runs$jt_pd & !(all_runs$jt_tt & all_runs$jt_gp &all_runs$inter)] <- "PD"
+  full_class[all_runs$jt_pd & all_runs$inter & !(all_runs$jt_tt & all_runs$jt_gp)] <- "PD_Int"
+  
+  full_class[all_runs$jt_gp & !(all_runs$jt_tt & all_runs$jt_pd &all_runs$inter)] <- "GR"
+  full_class[all_runs$jt_gp & all_runs$inter & !(all_runs$jt_tt & all_runs$jt_pd)] <- "GR_Int"
+  
+  full_class[is.na(full_class)] <- "Other"
+  
+  full_df      <- na.omit(data.frame(fm = factor(full_class),
+                                     dtm.s99[all_runs$msg,]>0))
+  
   dtm.pred <- data.frame(dtm.s99>0)
   
   colnames(dtm.s99)[432] <- "driver.s"
@@ -38,12 +65,13 @@ if(any(!curr_RDS %in% old_RDS)){
   is.pdc.rf <- randomForest(postdo ~ ., data = postdoc, sampsize = c(30, 30))
   is.gra.rf <- randomForest(gradst ~ ., data = grad_student, sampsize = c(30, 30))
   is.int.rf <- randomForest(interd ~ ., data = interdiscip, sampsize = c(30, 30))
-
+  full.rf   <- randomForest(fm     ~ ., data = full_df, sampsize = rep(20, 7))
   
   predict_tt <- predict(is.job.rf, dtm.pred)
   predict_pd <- predict(is.pdc.rf, dtm.pred)
   predict_gr <- predict(is.gra.rf, dtm.pred)
   predict_in <- predict(is.int.rf, dtm.pred)
+  predict_al <- predict(full.rf, dtm.pred)
   
   rf_models <- list(predict_tt, predict_pd, predict_gr, predict_in)
   r_preds   <- data.frame(msg = 1,
@@ -52,9 +80,21 @@ if(any(!curr_RDS %in% old_RDS)){
                           predict_gr,
                           predict_in)
     
+  # confusion winds up as a numeric vector indicating how many classes
+  # a message is predicted to cover:
+  #  * 0 (is not a tt, pd, gr or in job ad) ~39k
+  #  * 1 (is only one, and not any others)  ~ 7k
+  #  * 2 (is a couple of these)             ~ 6k
+  #  * 3                                    ~ 3k
+  
   confusion <- apply(r_preds[,2:4], 1, function(x)sum(as.logical(x)))
 
-  pred_good <- (confusion * as.logical(r_preds$predict_in) * 2)^2 + 1
+  # pred_good gets valuation based on whether or not there is confusion,
+  # whether a post is interdisciplinary (using the logical +1, so interdisc.
+  # posts get values twice as much as others), and then squares this to
+  # more highly prioritize these posts, to improve classification.
+  
+  pred_good <- (confusion * (as.logical(r_preds$predict_in)+1) * 2)^2 + 1
   
   saveRDS(pred_good, file = 'data/pred_good.RDS')
   saveRDS(r_preds,   file = 'data/predictions.RDS')
