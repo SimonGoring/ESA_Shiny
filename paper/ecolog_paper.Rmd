@@ -1,18 +1,18 @@
 ---
 title: "Interdiscplinary ECOLOG"
-author: "Simon Goring & Sarah Supp"
+author: "Simon Goring and Sarah Supp"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  word_document:
+    fig_height: 6
+    fig_width: 6
   pdf_document:
     pandoc_args: -V geometry:vmargin=1in -V geometry:hmargin=1in
   md_document:
     variant: markdown_github
-  word_document:
-    fig_height: 6
-    fig_width: 6
 csl: ecology.csl
 pandoc_args: -H margins.sty
-bibliography: goringsupp_references.bib
+bibliography: ecolog_paper.bib
 ---
 
 #Training and Hiring Patterns for Interdisciplinary Ecologists
@@ -54,11 +54,14 @@ From the final model we then tracked the rate of change in the classified messag
 library(ggplot2)
 library(mgcv)
 library(pander)
+library(randomForest)
   
 myw2 <- expand.grid(week = 1:5, month = 1:12, year = 2000:2015)
 
-source('R/load_term.R')
-source('R/load_models.R')
+source('../R/load_term.R')
+source('../R/load_models.R')
+
+dtm.s99 <- as.matrix(dtm.s99)
 
 ```
 
@@ -110,8 +113,6 @@ imp_table <- data.frame(Tenure = tail(names(sort(importance(is.job.rf)[,])), n=2
                         Interdisciplinary = tail(names(sort(importance(is.int.rf)[,])), n=20),
                         stringsAsFactors = FALSE)[20:1,]
 
-
-
 rownames(imp_table) <- NULL
 
 imp_table <- apply(imp_table, 2, function(x){x[!x %in% unlist(imp_table)[duplicated(unlist(imp_table))]] <- paste0('**',x[!x %in% unlist(imp_table)[duplicated(unlist(imp_table))]],'**');x})
@@ -121,8 +122,6 @@ pandoc.table(imp_table)
 ```
 
 The random forest model to explicitly identify Tenure Track positions indicates that terms of high importance include "tenuretrack" (indicating the removal of a hyphen), "assistant", "professor" and "undergraduate" (Table 2). For postdoctoral positions, it is again, postdoctoral, position, and then research that are most important.  The key term in this case is "interdisciplinary".  We're really looking at interdisciplinary jobs here, so it's no surprise that terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a much higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
-
-
 
 ```{r}
 
@@ -152,7 +151,7 @@ inter_models <- list(inter_gg_gam,
 plot_gam <- do.call(rbind.data.frame, 
                     lapply(1:3, function(x){
                       data.frame(time = r_preds$time,
-                                 pred = exp(predict(inter_models[[x]])),
+                                 pred = exp(predict(inter_models[[x]], type = 'response')),
                                  class = x)}))
 
 # plot_gam <- data.frame(time = r_preds$time,
@@ -169,7 +168,7 @@ ggplot(subset(plot_gam, time <= 2015),
        aes(x = time, y = pred, color = factor(class))) +
   geom_path() +
   theme_bw() +
-  coord_cartesian(xlim=c(2000, 2015), ylim=c(0, 0.6)) +
+  #coord_cartesian(xlim=c(2000, 2015), ylim=c(0, 0.6)) +
   xlab('Year of posting') +
   ylab('Proportional Postings') +
   theme(axis.title = element_text(family = 'serif', face = 'bold', size = 18))

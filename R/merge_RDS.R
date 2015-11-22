@@ -23,7 +23,7 @@
 #    6. Uncertain: If yes then assign a 1 (else NA)
 #    7. "Flag"
 
-all_RDS <- list.files('data', pattern = '*evals[0-9][0-9]*', full.names = TRUE)
+all_RDS <- list.files('../data', pattern = '*evals[0-9][0-9]*', full.names = TRUE)
 
 parse_lists <- function(x){
   
@@ -93,6 +93,6 @@ all_runs <- na.omit(do.call(rbind.data.frame, lapply(all_RDS, parse_files)))
 
 not_job <- all_runs$msg[which(all_runs$jt_na == TRUE)]
 
-saveRDS(object = all_RDS, file = 'data/RDS_list.RDS')
-saveRDS(object = not_job, file = 'data/not_jobs.RDS')
-saveRDS(object = all_runs, file = 'data/responses.RDS')
+saveRDS(object = all_RDS, file = '../data/RDS_list.RDS')
+saveRDS(object = not_job, file = '../data/not_jobs.RDS')
+saveRDS(object = all_runs, file = '../data/responses.RDS')
