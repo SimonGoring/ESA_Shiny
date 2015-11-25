@@ -12,19 +12,19 @@
 
 
 
-curr_RDS <- list.files('../data', pattern = '*evals[0-9][0-9]*', full.names = TRUE)
-old_RDS  <- readRDS('../data/RDS_list.RDS')
+curr_RDS <- list.files('data', pattern = '*evals[0-9][0-9]*', full.names = TRUE)
+old_RDS  <- readRDS('data/RDS_list.RDS')
 
 if(any(!curr_RDS %in% old_RDS)){
-  source('../R/merge_RDS.R')
-  source('../R/load_term.R')
+  source('R/merge_RDS.R')
+  source('R/load_term.R')
   
   dtm.s99 <- as.data.frame(as.matrix(dtm.s99))
   
   # To build the model:
   library(randomForest)
   
-  all_runs <- readRDS(file = '../data/responses.RDS')
+  all_runs <- readRDS(file = 'data/responses.RDS')
   
   tenure_track <- na.omit(data.frame(tt.job = factor(all_runs$jt_tt==1),
                                      dtm.s99[all_runs$msg,]>0))
@@ -79,7 +79,7 @@ if(any(!curr_RDS %in% old_RDS)){
                           predict_pd,
                           predict_gr,
                           predict_in)
-    
+  
   # confusion winds up as a numeric vector indicating how many classes
   # a message is predicted to cover:
   #  * 0 (is not a tt, pd, gr or in job ad) ~39k
@@ -97,26 +97,26 @@ if(any(!curr_RDS %in% old_RDS)){
   #pred_good <- (confusion * (as.logical(r_preds$predict_in)+1) * 2)^2 + 1
   pred_good <- ((1/apply(predict_al,1,max)^2))
   
-  saveRDS(pred_good, file = '../data/pred_good.RDS')
-  saveRDS(r_preds,   file = '../data/predictions.RDS')
-  saveRDS(rf_models, file = '../data/models.RDS')
+  saveRDS(pred_good, file = 'data/pred_good.RDS')
+  saveRDS(r_preds,   file = 'data/predictions.RDS')
+  saveRDS(rf_models, file = 'data/models.RDS')
 
-  saveRDS(is.job.rf, file = '../data/is_job.RDS')
-  saveRDS(is.pdc.rf, file = '../data/is_pdc.RDS')
-  saveRDS(is.gra.rf, file = '../data/is_era.RDS')
-  saveRDS(is.int.rf, file = '../data/is_int.RDS')
-  saveRDS(full.rf,   file = '../data/full.RDS')
+  saveRDS(is.job.rf, file = 'data/is_job.RDS')
+  saveRDS(is.pdc.rf, file = 'data/is_pdc.RDS')
+  saveRDS(is.gra.rf, file = 'data/is_era.RDS')
+  saveRDS(is.int.rf, file = 'data/is_int.RDS')
+  saveRDS(full.rf,   file = 'data/full.RDS')
   
     
 } else{
   
-  is.job.rf <- readRDS(file = '../data/is_job.RDS')
-  is.gra.rf <- readRDS(file = '../data/is_era.RDS')
-  is.pdc.rf <- readRDS(file = '../data/is_pdc.RDS')
-  is.int.rf <- readRDS(file = '../data/is_int.RDS')
-  full.rf <- readRDS(file = '../data/full.RDS')
+  is.job.rf <- readRDS(file = 'data/is_job.RDS')
+  is.gra.rf <- readRDS(file = 'data/is_era.RDS')
+  is.pdc.rf <- readRDS(file = 'data/is_pdc.RDS')
+  is.int.rf <- readRDS(file = 'data/is_int.RDS')
+  full.rf   <- readRDS(file = 'data/full.RDS')
   
-  r_preds   <- readRDS('../data/predictions.RDS')
-  rf_models <- readRDS('../data/models.RDS')
+  r_preds   <- readRDS('data/predictions.RDS')
+  rf_models <- readRDS('data/models.RDS')
 
 }

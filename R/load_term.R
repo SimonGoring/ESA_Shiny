@@ -2,14 +2,14 @@
 
 library(tm)
 
-if('all.messages.RDS' %in% list.files('../data')){
-  all.messages <- readRDS(file = '../data/all.messages.RDS') 
+if('all.messages.RDS' %in% list.files('data')){
+  all.messages <- readRDS(file = 'data/all.messages.RDS') 
 } else {
-  source('../R/Scrape_ECOLOG.R')
+  source('R/Scrape_ECOLOG.R')
 }
 
-if('term_frame.RDS' %in% list.files('../data')){
-  dtm_both <- readRDS('../data/term_frame.RDS')
+if('term_frame.RDS' %in% list.files('data')){
+  dtm_both <- readRDS('data/term_frame.RDS')
   dtm     <- dtm_both[[1]]
   dtm.s99 <- dtm_both[[2]]
 } else {
@@ -48,5 +48,5 @@ if('term_frame.RDS' %in% list.files('../data')){
   
   dtm   <- DocumentTermMatrix(tm.corp)
   dtm.s99 <- removeSparseTerms(dtm, 0.99)
-  saveRDS(list(dtm, dtm.s99), file = '../data/term_frame.RDS')
+  saveRDS(list(dtm, dtm.s99), file = 'data/term_frame.RDS')
 }
