@@ -38,7 +38,22 @@ Corresponding author: Simon Goring - goring@wisc.edu
 
 ##Introduction
 
-Interdisciplinarity has been receiving increased attention in ecology, both as a method of studying key processes, but also as a subject of interest in and of itself. Part of this increased attention is the result of the increasingly complex set of problems facing modern ecologists, intertwined as they are with land use change, climate change, changes in biogeophysical processes, and human interactions (whole raft of references). To help support the increased need for interdisciplinary approaches in research a number of training programs and funding sources have been structured to address training at the graduate and post-doctoral level.  These include SESYNC, IGERT, CIEE in Canada and other stuff. . . But given the challenges of interdisciplinary research (references)   
+Interdisciplinarity has been receiving increased attention in the sciences, both as a method of studying key processes, but also as a subject of interest in and of itself. Part of this increased attention is the result of the increasingly complex set of problems facing modern ecologists, intertwined as they are with land use change, climate change, changes in biogeophysical processes, and human interactions [@heffernan2014macrosystems; @dawson2011science; @goring2014improving;@basche2014challenges;@white2015next]. To help support the increased need for interdisciplinary approaches in research, a number of training programs and funding sources have been structured to address training at the graduate and post-doctoral level [@schmidt2012new;@wagner2012developing;@stamp2015preparing;@hibbert2014quest], and new models for promoting interdisciplinary work within academia have been proposed [@goring2014improving], but challenges and questions remain.
+
+Perceptions of risk for researchers engaged in interdisciplinary research are real [@fischer2012pretenure] and must be addressed within academia. These risks are often balanced by the promise of doing exciting work, greater likelihood of future collaboration [@hampton2011collaboration] and others. Hibbert *et al*. [-@hibbert2014quest] decribe the optimism of Doctoral students who feel that their interdisciplinary experience has created a unique niche for them through narrative analysis, but also indicate that interdisciplinary students may feel lost on their "quest" without adequate supervision. Ultimately, it is unclear the extent to which the trend toward increasing interdisciplinarity within graduate training programs is playing itself out at the faculty level. Certainly interdisciplinary programs provide greater support for non-traditional outcomes for many of their students, but interdisciplinary research is supported by tenured or tenure track researchers who may or may not themselves be a product of interdisciplinary research programs.
+
+**I need to address some of the simplifications I'm making here.**
+
+![png_models](slide1.PNG)
+**Figure 1**. *Three models for interdisciplinary research & hiring within research departments.*
+
+It is possible to conceptualize multiple "preferred" models for interdisciplinary research at the institutional level. One model involves deeply disciplinary researchers collaborating on a project and hiring graduate or postdoctoral researchers who will act as the disciplinary bridges.  In this preferred model we might believe that tenure-track or tenured researchers would prefer colleagues who may appear more deeply disciplinary than interdisciplinary.  We represent this model in Fig 1a, where hiring is largely drawn from disciplinary (circles) researchers, and interdisciplinary collaboration is undertaken by interdisciplinary graduate students.  Here we might predict that hiring for interdisciplinary researchers would remain low, and be relatively unchanged through time.
+
+The second model conceptualizes a balanced model, where embedded interdisciplinary researchers are replaced by interdisciplinary researchers, and elsewhere disciplinary researchers are hired. This model then predicts that hiring of interdisciplinary will remain low and stable through time.
+
+The third model suggests that recent funding through programs seen to be largely interdisciplinary (through NSF these might include Macrosystems Biology, EarthCube, Coupled Human Systems & others) might lead to the increased hiring of interdisciplinary researchers through time.
+
+We aim here to test whether increased training at the graduate level is translating into increased hiring rates for tenure track faculty with interdisciplinary backgrounds.  Using job postings from ECOLOG (https://listserv.umd.edu/archives/ecolog-l.html)[] we classify and assess the rates of change in job postings for graduate, postdoctoral and tenure track positions, both with and without interdisciplinary focus.  Using relative rates of posting
 
 ##Methods
 
@@ -58,8 +73,8 @@ library(randomForest)
   
 myw2 <- expand.grid(week = 1:5, month = 1:12, year = 2000:2015)
 
-source('../R/load_term.R')
-source('../R/load_models.R')
+source('R/load_term.R')
+source('R/load_models.R')
 
 dtm.s99 <- as.matrix(dtm.s99)
 
@@ -129,50 +144,33 @@ rep.row<-function(x,n){
    matrix(rep(x,each=n),nrow=n)
 }
 
+# This is where we pull out the date.  For each list in all.messages (representing a
+# unique week), provide the numeric week value.
+
 weeks <- do.call(rbind.data.frame, lapply(1:length(all.messages),function(x)rep.row(myw2[x,],length(all.messages[[x]]))))
 
-r_preds$time <- unlist(weeks[,3]) + (unlist(weeks[,2]) + unlist(weeks[,1])/4)/12
+all_preds <- data.frame(date = unlist(weeks[,3]) + (unlist(weeks[,2]) + unlist(weeks[,1])/4)/12,
+                        prediction = predict_al,
+                        count = 1)
 
-r_preds <- subset(r_preds, time <= 2015)
+all_cast <- dcast(all_preds, date ~ prediction, value.var = 'count',
+                  fun.aggregate = sum)
 
-interdiscip_gam <- gam(as.logical(predict_in)~s(time, k = 120), 
-                       data = r_preds, family='binomial')
-inter_tt_gam <- gam(I(as.logical(predict_in)&as.logical(predict_tt))~s(time, k = 120), 
-                       data = r_preds, family='binomial')
-inter_gg_gam <- gam(I(as.logical(predict_in)&as.logical(predict_gr))~s(time, k = 120), 
-                       data = r_preds, family='binomial')
-inter_pd_gam <- gam(I(as.logical(predict_in)&as.logical(predict_pd))~s(time, k = 120),
-                       data = r_preds, family='binomial')
+#all_cast[,2:8] <- all_cast[,2:8] / rowSums(all_cast[,2:8])
+            
+all_melt <- melt(all_cast, id.vars = c('date'))
 
-inter_models <- list(inter_gg_gam,
-                     inter_pd_gam,
-                     inter_tt_gam)
+all_melt <- subset(all_melt, date <= 2015 & !variable %in% 'Other')
+all_melt$int <- regexpr("Int", all_melt$variable)>0
 
-plot_gam <- do.call(rbind.data.frame, 
-                    lapply(1:3, function(x){
-                      data.frame(time = r_preds$time,
-                                 pred = exp(predict(inter_models[[x]], type = 'response')),
-                                 class = x)}))
+all_melt$variable <- substr(all_melt$variable, 1,2)
 
-# plot_gam <- data.frame(time = r_preds$time,
-#                        value= c(predict(inter_gg_gam, type = 'response'),
-#                                 predict(inter_pd_gam, type = 'response'),
-#                                 predict(inter_tt_gam, type = 'response')),
-#                        class = rep(c('Interdisciplinary',
-#                                      'Graduate',
-#                                      'Postdoc',
-#                                      'Tenure Track'), 
-#                                    each = length(predict(inter_gg_gam))))
-
-ggplot(subset(plot_gam, time <= 2015), 
-       aes(x = time, y = pred, color = factor(class))) +
-  geom_path() +
+ggplot(all_melt, aes(x = date, y = value, color = variable)) + 
+  geom_smooth(span = 0.07, 
+              aes(linetype=int)) +
   theme_bw() +
-  #coord_cartesian(xlim=c(2000, 2015), ylim=c(0, 0.6)) +
-  xlab('Year of posting') +
-  ylab('Proportional Postings') +
-  theme(axis.title = element_text(family = 'serif', face = 'bold', size = 18))
-
+  coord_cartesian(xlim=c(2000, 2015), expand=0)
+  
 ```
 ##Discussion
 
