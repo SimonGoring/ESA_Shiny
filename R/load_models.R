@@ -100,6 +100,7 @@ if(any(!curr_RDS %in% old_RDS)){
   saveRDS(pred_good, file = 'data/pred_good.RDS')
   saveRDS(r_preds,   file = 'data/predictions.RDS')
   saveRDS(rf_models, file = 'data/models.RDS')
+  saveRDS(predict_al, file = 'data/predict_al.RDS')
 
   saveRDS(is.job.rf, file = 'data/is_job.RDS')
   saveRDS(is.pdc.rf, file = 'data/is_pdc.RDS')
@@ -117,6 +118,7 @@ if(any(!curr_RDS %in% old_RDS)){
   full.rf   <- readRDS(file = 'data/full.RDS')
   
   r_preds   <- readRDS('data/predictions.RDS')
+  predict_al   <- readRDS('data/predict_al.RDS')
   rf_models <- readRDS('data/models.RDS')
 
 }
