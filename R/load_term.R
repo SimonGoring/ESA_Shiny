@@ -5,7 +5,7 @@ library(tm)
 if('all.messages.RDS' %in% list.files('data')){
   all.messages <- readRDS(file = 'data/all.messages.RDS') 
 } else {
-  source('Scrape_ECOLOG.R')
+  source('R/Scrape_ECOLOG.R')
 }
 
 if('term_frame.RDS' %in% list.files('data')){
