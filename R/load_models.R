@@ -10,8 +10,6 @@
 #  high confusion rate are given a high likelihood of being selected for hand
 #  coding in the Shiny app.
 
-
-
 curr_RDS <- list.files('data', pattern = '*evals[0-9][0-9]*', full.names = TRUE)
 old_RDS  <- readRDS('data/RDS_list.RDS')
 
@@ -94,8 +92,8 @@ if(any(!curr_RDS %in% old_RDS)){
   # posts get values twice as much as others), and then squares this to
   # more highly prioritize these posts, to improve classification.
   
-  #pred_good <- (confusion * (as.logical(r_preds$predict_in)+1) * 2)^2 + 1
-  pred_good <- ((1/apply(predict_al,1,max)^2))
+  predict_prob <- predict(full.rf, dtm.pred, type = 'prob')
+  pred_good <- ((1/apply(predict_prob,1,max)^2))
   
   saveRDS(pred_good, file = 'data/pred_good.RDS')
   saveRDS(r_preds,   file = 'data/predictions.RDS')
