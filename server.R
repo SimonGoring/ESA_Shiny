@@ -45,9 +45,10 @@ shinyServer(function(input, output, session) {
         return(length(messages))
       }
       
-      samples <- (1:length(subjects))[!(1:length(subjects))%in%(not_jobs+1)]
+      msgs <- !(1:length(subjects))%in%(not_jobs+1)
+      samples <- (1:length(subjects))[msgs]
       tester <- sample(samples, 1, 
-                       prob = c(1,pred_good)[!(1:length(subjects))%in%(not_jobs+1)]^2)
+                       prob = c(1,pred_good)[msgs]^3)
       
       while(is.na(messages[tester])){
         tester <- sample(samples, 1)  
