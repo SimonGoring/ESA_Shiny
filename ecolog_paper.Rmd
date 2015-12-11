@@ -1,16 +1,16 @@
 ---
 title: "Interdiscplinary ECOLOG"
 author: "Simon Goring and Sarah Supp"
-date: '`r format(Sys.time(), ''%d %B, %Y'')`'
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  html_document: default
+  word_document:
+    fig_height: 6
+    fig_width: 6
   md_document:
     variant: markdown_github
   pdf_document:
     pandoc_args: -V geometry:vmargin=1in -V geometry:hmargin=1in
-  word_document:
-    fig_height: 6
-    fig_width: 6
+  html_document: default
 csl: ecology.csl
 pandoc_args: -H margins.sty
 bibliography: ecolog_paper.bib
@@ -47,7 +47,7 @@ Perceptions of risk for researchers engaged in interdisciplinary research are re
 
 ![png_models](slide1.PNG)
 
-**Figure 1**. *Three models for interdisciplinary research & hiring within research departments. Blue lines represent supervision, red lines represent hiring.  We use squares to represent interdisciplinary researchers and circles to represent researchers who may be considered disciplinary. THIS CAPTION NEEDS WORK, better explanation in text.*
+**Figure 1**. *Three models for interdisciplinary research & hiring within research departments. Blue lines represent supervision by tenured researchers (upper row), red lines represent hiring of untenured (postdoctoral & graduate researchers; lower row).  We use squares to represent interdisciplinary researchers and circles to represent researchers who may be considered "disciplinary". Model (a) represents a system where non-tenured researchers (lower row) carry out interdisciplinary research, but disciplinary researchers are strongly favored for tenure track positions.  Model (b) indicates some role for interdisciplinary researchers, but this role is stable through time. Model (c) indicates that current interest in interdisciplinarity carries through to hiring at the tenure track level.*
 
 It is possible to conceptualize multiple "preferred" models for interdisciplinary research at the institutional level. One model involves deeply disciplinary researchers collaborating on a project and hiring graduate or postdoctoral researchers who will act as the disciplinary bridges.  In this preferred model we might believe that tenure-track or tenured researchers would prefer colleagues who may appear more deeply disciplinary than interdisciplinary.  We represent this model in Fig 1a, where hiring is largely drawn from disciplinary (circles) researchers, and interdisciplinary collaboration is undertaken by interdisciplinary graduate students.  Here we might predict that hiring for tenure-track interdisciplinary researchers would remain low, and be relatively unchanged through time.
 
@@ -182,13 +182,13 @@ ggplot(all_melt, aes(x = date, y = value, color = variable)) +
 
 ### Main points to discuss:
 
-First two to three paragraphs.
+**First two to three paragraphs.**
 * refs on ac hiring trends generally (e.g. proportion of ecology grads/postdocs that get t-t jobs) & increasing importance of interdiscip.
   * Our RESULTS: declining number of opportunities at each academic career stage (more grad positions than postdoc than t-t). (as a proportion)
   * Differences in trends for interdiscip vs traditional
   * how does this match our models?
   
-Two paragraphs on 
+**Two paragraphs**
 * back end considerations (caveats)
   * defining interdisciplinarity
     * because tools often are part of their own disciplines, and finding that dividing line can be tricky.
@@ -198,25 +198,26 @@ Two paragraphs on
   * Most job ads at the tt level have been "written by committee" and so there is evidence of direction & intention in the ads.
   * interdisciplinarity in the grad & postdoc ads may be overstated.
 
-Two paragraphs
+**Two paragraphs**
+* David, could you take the lead on this possibly?
 * More broad discussion about ECOLOG
   *increasing # of postings per year, esp. for graduate/postdoc jobs (perhaps what we really want to plot is proportion of interdisciplinary jobs?)
   * increase in postdoc interdisc. jobs, esp 2005-2010, then level off? (similar pattern for graduate work?)
   * relatively flat trend for faculty t-t jobs (ony very slight increase?)
   * also the impact of economic issues (jobs during recession)
 
-One paragraph
+**One paragraph**
 * refs that give suggestions or "rules of thumb" for interdisp. job candidates?
   * important for interdiscp t-t candidates to still be able to have "story" they can tell - important not to appear unfocused or too broad, like to be categorized.
   * does interdisp. work have particular benefits for non ac vs. ac careers? (can't really measure in our survey because we didn't finely divide up non-ac jobs, can only speculate)
   
-One paragraph
+**One paragraph**
 * This is an incredibly rich dataset that would allow deeper investigation:
-  * Ariel Fournier (seasonal jobs & unpaid internships)
+  * Ariel Fournier (seasonal jobs & unpaid internships) [@fournier2015volunteer]
   * are interdisp. researchers seeking non t-t careers (e.g. government, non profit?)
   * salary levels 
   
-Final Paragraph
+**Final Paragraph**
 * Summary of findings
 
 Text Panel
