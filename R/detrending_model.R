@@ -1,0 +1,83 @@
+# Detrending the model:
+
+all_melt$week <- round(all_melt$date %% 1 * 52, 0) + 1
+all_melt$year <- floor(all_melt$date)
+all_melt$intweek <- all_melt$week + (all_melt$year - 2000) * 52
+
+colnames(all_melt)[2] <- "class"
+
+all_melt$full_class <- factor(paste0(all_melt$class, "_", all_melt$int))
+
+all_melt$class <- factor(all_melt$class) # This needs to be a class to get the "by" to work:
+
+# Modelling with a 52 week cycle model.
+# The Model is binomial to account for the difference in total postings per year.
+# These models are big & take a long time to run, but (I think) we're running these 
+# accurately.  
+#  The total number of graduate postings as a proportion of messages is increasing strongly in
+#  Ecolog.  The number of postdoc positions is increasing, but not nearly by as much.
+
+if('modeled.RDS' %in% list.files('data')){
+  modeled <- loadRDS('data/modeled.RDS')  
+} else {
+  modeled <- gamm(value ~ s(week, by = full_class, bs= 'cc', k = 12) +
+                   s(date, by = full_class, k = 15),
+                 random = list(class=~1, int = ~1), 
+                 method = 'REML',
+                 data = all_melt,
+                 family = poisson,
+                 niterPQL=200)
+  
+  saveRDS(object = modeled, file = 'data/modeled.RDS')
+}
+  
+if('modeled1.RDS' %in% list.files('data')){
+  modeled1 <- loadRDS('data/modeled1.RDS')  
+} else {
+  modeled1 <- gamm(cbind(value, fail) ~ s(week, by = full_class, bs= 'cc', k = 12) +
+                 s(date, by = full_class, k = 15),
+                 random = list(class=~1, int = ~1),
+                 method = 'REML',
+                 correlation = corARMA(form = ~1|date, p = 1),
+               data = all_melt,
+               family = binomial,
+               niterPQL=200)
+  saveRDS(object = modeled1, file = 'data/modeled1.RDS')
+}
+
+layout(matrix(1:2, ncol = 2))
+res <- resid(modeled$lme, type = "normalized")
+acf(res, lag.max = 100, main = "ACF - AR(2) errors")
+pacf(res, lag.max = 100, main = "pACF- AR(2) errors")
+
+# Shows model 1 is best.
+BIC(modeled$lme, modeled1$lme)
+
+pred.output <- expand.grid(year = 2000:2015, 
+                           week = 1:52,
+                           full_class = unique(all_melt$full_class))
+
+pred.output$class <- substr(pred.output$full_class, 1, 2)
+pred.output$inter <- substr(pred.output$full_class, 4, 1000)
+pred.output$date  <- pred.output$year + (pred.output$week/52 - 1)
+
+p1 <- predict(modeled1$gam, newdata = pred.output, type = 'terms', se.fit = TRUE)
+
+pred.output.p <- data.frame(pred.output, p1)
+pred.output.p[pred.output.p == 0] <- NA
+
+pred_melt <- melt(pred.output.p, id.vars = c('year', 'week', 'date', 'full_class', 'class', 'inter'), na.rm = TRUE)
+
+# Weekly plot:
+ggplot(subset(pred_melt, regexpr('^fit.s.week', variable)>0 & year == 2000),
+       aes(x = week, y = value, group = full_class, color = inter)) + 
+  geom_path(size = 2) +
+  scale_color_brewer(type = 'qual') +
+  facet_wrap(~class) + 
+  theme_bw()
+
+ggplot(subset(pred_melt, regexpr('^fit.s.date', variable)>0 & week == 1),
+       aes(x = date, y = value, group = full_class, color = inter)) + 
+  geom_path(size = 2) +
+  scale_color_brewer(type = 'qual') +
+  facet_wrap(~class) + theme_bw()

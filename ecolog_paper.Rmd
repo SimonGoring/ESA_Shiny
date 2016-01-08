@@ -180,7 +180,9 @@ all_preds <- data.frame(date = unlist(weeks[,3]) + (unlist(weeks[,2]) + unlist(w
 all_cast <- dcast(all_preds, date ~ prediction, value.var = 'count',
                   fun.aggregate = sum)
 
-total.msg <- rowSums(all_cast[,-1])
+#  Are we looking at the total number of messages, or the total number of jobs?
+total.job <- rowSums(all_cast[,-c(1, 4)])
+total.msg <- rowSums(all_cast[,-c(1)])
 
 #all_cast[,2:8] <- all_cast[,2:8] / rowSums(all_cast[,2:8])
             
@@ -191,7 +193,8 @@ all_melt$int <- regexpr("Int", all_melt$variable)>0
 
 all_melt$variable <- substr(all_melt$variable, 1,2)
 
-all_melt$fail <- total.msg[match(all_melt$date, all_cast$date)] - all_melt$value
+all_melt$fail_job <- total.job[match(all_melt$date, all_cast$date)] - all_melt$value
+all_melt$fail_msg <- total.msg[match(all_melt$date, all_cast$date)] - all_melt$value
 
 ```
 
@@ -246,7 +249,7 @@ This dataset provides opportunities beyon understanding the state of the interdi
 
 Job postings on Ecolog have increased along with the increase in posting volume since 2000, however the increase in total postings for graduate positions is much stronger than for any other job position. The seasonal trends vary between interdisciplinary and disciplinary positions, and across 
 
-```{r textbox, fig.width=4}
+```{r textbox, echo=FALSE, warning=FALSE, message=FALSE}
 ggplot(all_melt, aes(x = date, y = I(value/fail), color = variable)) + 
   geom_smooth(span = 0.07, 
               aes(linetype=int)) +
