@@ -250,7 +250,7 @@ This dataset provides opportunities beyon understanding the state of the interdi
 Job postings on Ecolog have increased along with the increase in posting volume since 2000, however the increase in total postings for graduate positions is much stronger than for any other job position. The seasonal trends vary between interdisciplinary and disciplinary positions, and across 
 
 ```{r textbox, echo=FALSE, warning=FALSE, message=FALSE}
-ggplot(all_melt, aes(x = date, y = I(value/fail), color = variable)) + 
+ggplot(all_melt, aes(x = date, y = I(value/fail_job), color = variable)) + 
   geom_smooth(span = 0.07, 
               aes(linetype=int)) +
   theme_bw() + facet_wrap(~variable) +

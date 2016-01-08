@@ -22,11 +22,11 @@ if('modeled.RDS' %in% list.files('data')){
 } else {
   modeled <- gamm(value ~ s(week, by = full_class, bs= 'cc', k = 12) +
                    s(date, by = full_class, k = 15),
-                 random = list(class=~1, int = ~1), 
+                 random = list(class=~1), 
                  method = 'REML',
                  data = all_melt,
                  family = poisson,
-                 niterPQL=200)
+                 niterPQL=200, sing.tol=1e-20)
   
   saveRDS(object = modeled, file = 'data/modeled.RDS')
 }
@@ -34,21 +34,35 @@ if('modeled.RDS' %in% list.files('data')){
 if('modeled1.RDS' %in% list.files('data')){
   modeled1 <- loadRDS('data/modeled1.RDS')  
 } else {
-  modeled1 <- gamm(cbind(value, fail) ~ s(week, by = full_class, bs= 'cc', k = 12) +
-                 s(date, by = full_class, k = 15),
-                 random = list(class=~1, int = ~1),
+  modeled3 <- gamm(value ~ s(week, by = full_class, bs= 'cc', k = 25) +
+                 s(date, by = full_class, k = 7),
+                 random = list(class=~1),
                  method = 'REML',
                  correlation = corARMA(form = ~1|date, p = 1),
                data = all_melt,
-               family = binomial,
+               family = poisson,
                niterPQL=200)
   saveRDS(object = modeled1, file = 'data/modeled1.RDS')
 }
 
+if('modeled2.RDS' %in% list.files('data')){
+  modeled2 <- loadRDS('data/modeled2.RDS')  
+} else {
+  modeled2 <- gamm(value ~ s(week, by = full_class, bs= 'cc', k = 52) +
+                     s(date, by = full_class),
+                   random = list(class=~1),
+                   method = 'REML',
+                   correlation = corARMA(form = ~1|date, p = 2),
+                   data = all_melt,
+                   family = poisson,
+                   niterPQL=200)
+  saveRDS(object = modeled2, file = 'data/modeled2.RDS')
+}
+
 layout(matrix(1:2, ncol = 2))
-res <- resid(modeled$lme, type = "normalized")
-acf(res, lag.max = 100, main = "ACF - AR(2) errors")
-pacf(res, lag.max = 100, main = "pACF- AR(2) errors")
+res <- resid(modeled1$lme, type = "normalized")
+acf(res, lag.max = 1000, main = "ACF - AR(2) errors")
+pacf(res, lag.max = 1000, main = "pACF- AR(2) errors")
 
 # Shows model 1 is best.
 BIC(modeled$lme, modeled1$lme)
