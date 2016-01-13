@@ -4,8 +4,6 @@ author: "Simon Goring and Sarah Supp"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   word_document:
-    fig_height: 6
-    fig_width: 6
   md_document:
     variant: markdown_github
   pdf_document:
@@ -22,10 +20,18 @@ Simon J. Goring^1^
 
 Sarah Supp^2^
 
+David Inouye^3^
+
+Andria Dawson^4^
+
 
 ^1^ Department of Geography, University of Wisconsin - Madison
 
 ^2^ School of Biology and Ecology, University of Maine
+
+^3^ Department of Biology, University of Maryland, College Park
+
+^4^ University of Arizona
 
 Corresponding author: Simon Goring - goring@wisc.edu
 
@@ -59,7 +65,7 @@ Research Communication:
 
 Interdisciplinarity has been receiving increased attention in the sciences, both as a method of studying key processes, but also as a subject of interest in and of itself. Part of this increased attention is the result of improved access to data and tools that allow researcheres to address the complex set of problems facing modern ecologists, where biological responses intersect with land use change, climate change, changes in biogeophysical processes, and human interactions [@heffernan2014macrosystems; dawson2011beyond; @goring2014improving; @basche2014challenges; @white2015next]. To help support the increased need for interdisciplinary approaches in research, a number of training programs and funding sources have been structured to address needs at the graduate and post-doctoral levels [@schmidt2012new;@wagner2012developing;@stamp2015preparing;@hibbert2014quest], and new models for promoting and improving interdisciplinarity within academia have been proposed [@goring2014improving;@ciannelli2014transdisciplinary;@cheruvelil2014creating], but challenges and questions remain.
 
-Perceptions of risk for researchers engaged in interdisciplinary research are real, particularly for early career researchers [@fischer2012pretenure], and must be addressed within academia. These risks are often balanced by the promise of doing exciting work, greater likelihood of future collaboration [@hampton2011collaboration], higher rates of publication [@porter2012research, but see @van2015interdisciplinary], and, higher rates of funding [@bellotti2012getting]. Hibbert *et al*. [-@hibbert2014quest] use narrative analysis to decribe the optimism of Doctoral students who feel that their interdisciplinary experience has created a unique niche for them, but also indicate that interdisciplinary students may feel lost on their "quest" without adequate supervision. Ultimately, it is unclear the extent to which the trend toward increasing interdisciplinarity within graduate training programs is playing itself out at the faculty level, especially given that some data on interdisciplinary collaboration points to explicit costs to the interdisciplinary researcher [@goring2014improving; @van2011factors; @van2015interdisciplinary]. There is a role for increased integration between traditional academic & non-academic outcomes within interdisciplinary programs [@ciannelli2014transdisciplinary], but interdisciplinary research itself is often supported by tenured or tenure track researchers who may or may not themselves be a product of interdisciplinary research programs.
+Perceptions of risk for researchers engaged in interdisciplinary research are real, particularly for early career researchers [@fischer2012pretenure], and must be addressed within academia. These risks are often balanced by the promise of doing exciting work, greater likelihood of future collaboration [@hampton2011collaboration], higher rates of publication [@porter2012research; but see @van2015interdisciplinary], and, higher rates of funding [@bellotti2012getting]. Hibbert *et al*. [-@hibbert2014quest] use narrative analysis to decribe the optimism of Doctoral students who feel that their interdisciplinary experience has created a unique niche for them, but also indicate that interdisciplinary students may feel lost on their "quest" without adequate supervision. Ultimately, it is unclear the extent to which the trend toward increasing interdisciplinarity within graduate training programs is playing itself out at the faculty level, especially given that some data on interdisciplinary collaboration points to explicit costs to the interdisciplinary researcher [@goring2014improving; @van2011factors; @van2015interdisciplinary]. There is a role for increased integration between traditional academic & non-academic outcomes within interdisciplinary programs [@ciannelli2014transdisciplinary], but interdisciplinary research itself is often supported by tenured or tenure track researchers who may or may not themselves be a product of interdisciplinary research programs.
 
 While ecology is often perceived as being highly interdisciplinary, publications patterns do not neccessarily reflect this belief [@van2015interdisciplinary; @romolini2013next].  Regardless, it is important to clarify what is meant by interdisciplinarity in the context of this paper, and in the broader discussion.  There are multiple terms used in discussions about disciplinarity, primarily "multidisciplinary", "interdisciplinary" and "transdisciplinary".  Choi and Pak [-@choi2006multidisciplinarity] provide a unique framing for the three models: **Multidisciplinary** research is additive (*"2 + 2 = 4"*) where individuals maintain their disciplinary roles, and the outcome is the sum of the parts.  **Interdisciplinary** research is interactive (*"2 + 2 = 5"*) and involves the integration of disciplines, resulting in something that is more than the sum of its parts.  **Transdisciplinary** research is holistic (*"2 + 2 = yellow"*) with results that transcend the traditional disciplinary boundary [@choi2006multidisciplinarity]. Currently, ecology is broadly disciplinary, and rarely transdisciplinary.  For the purposes of this paper we use the term interdisciplinary as a catch-all, and identify the "interdisciplinary" worker, an individual who is able to integrate multiple disciplines within their own research practice, rather than interdisciplinary teams.
 
@@ -162,7 +168,9 @@ pander(imp_table, split.tables = Inf)
 
 The random forest model to explicitly identify tenure-track positions indicates that terms of high importance include "tenuretrack" (indicating the removal of a hyphen), "assistant", "professor" and "undergraduate" (Table 2). For postdoctoral positions, the model identifies "postdoctoral", "position", and "research" as most important.  The key term in this case is "interdisciplinary".  We're really looking at interdisciplinary jobs here, so it's no surprise that terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a much higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
 
-```{r, echo=FALSE, warning = FALSE, message=FALSE}
+Job postings on Ecolog have increased along with the increase in posting volume since 2000, however the increase in total postings as a proportion of job postings for graduate positions is much stronger than for any other job position (**Figure X**).
+
+```{r textbox, echo=FALSE, warning=FALSE, message=FALSE, width = 6, height = 4}
 
 rep.row<-function(x,n){
    matrix(rep(x,each=n),nrow=n)
@@ -196,9 +204,50 @@ all_melt$variable <- substr(all_melt$variable, 1,2)
 all_melt$fail_job <- total.job[match(all_melt$date, all_cast$date)] - all_melt$value
 all_melt$fail_msg <- total.msg[match(all_melt$date, all_cast$date)] - all_melt$value
 
+source('R/detrending_model.R')
+
+all_melt$class <- factor(all_melt$class, labels = c("Graduate", 'Postdoctoral', 'Tenure Track'))
+
+ggplot(all_melt, aes(x = date, y = I(value/(fail_msg+value)), color = class)) + 
+  geom_smooth(span = 0.08, 
+              aes(linetype=int),
+              se=FALSE) +
+  theme_bw() + facet_wrap(~class) +
+  scale_linetype_discrete(guide = guide_legend(title = "Interdisciplinary")) +
+  scale_color_brewer(type='qual', 
+                     guide  = guide_legend(title = "Position")) +
+  scale_x_continuous(breaks = seq(2000, 2010, by = 5)) +
+  scale_y_continuous(breaks = seq(0.05, .25, by = .05)) +
+  coord_cartesian(xlim=c(2000, 2015), ylim = c(0, 0.25), expand=0) +
+  xlab('Year') +
+  ylab('Proportion of Messages') +
+  theme(axis.text = element_text(family='serif', size = 16),
+        axis.title = element_text(family='serif', size = 18, face = 'bold'),
+        #legend.text = element_text(family='serif', size = 14),
+        strip.text =  element_text(family='serif', size = 16, face = 'bold'))
+
+
 ```
 
-The trends we see show . . .
+**Figure X.** *Job postings as a proportion of all postings on ECOLOG. Postings for graduate student positions increase strongly from 2000 - 2015 as do postdoctoral position postings.  Tenure track postings appear to remain relatively stable through time.  Interdisciplinary postings remain low through time and appear to increase at a rate equal to, or lower than the disciplinary postings.*
+
+Seasonal trends suggest differences in timing and intensity for the different job classes (Figure).  In all cases the amplitude of the disciplinary curve is much higher than the amplitude of the interdisciplinary curve, although this may be, in part, a function of the total number of postings.  The timing of peak posting and the lowest rates of posting also varies by class.  The lowest proportion of postings for graduate positions occurs at the end of July (as with Postdoctoral positions), while the lowest volume for Tenure Track positions occurs a month earlier in June.  The peak time of tenure track posting occurs in mid-November (similar to Postdoctoral postings), while the graduate posting peak appears to be broader, with a peak in late February.
+
+![weeklychange](figures/week_plot.tiff)
+
+**Figure X**. *The seasonal trend in position posting shows differences between job classes, and between interdisciplinary and disciplinary postings. Panels represent job types and line coloring indicates whether a position in interdisciplinary (purple) or disciplinary (green).  Positive values suggest higher than average posting proportions.  The model is derived using a generalized additive mixed model, with job class as a random effect and a one year ARMA lag.*
+
+All three types of postings appear somewhat bimodal, wheras the major peak for Tenure Track and Postdoctoral jobs occurs in November, the secondary peak is in the early spring, coincident with the Graduate position peak.
+
+For interdisciplinary positions the amplitude of the seasonal trend is much lower and there appears to be a shift from bimodal to unimodal posting seasonality.
+
+![annualchange](figures/ann_plot.tiff)
+
+**Figure X** *Annual trend for Ecolog job postings.  Overall there is a trend of increasing total postings for each job class, with interdisciplinary postings increasing at a lower rate for graduate and postdoctoral students than for tenure track positions, which have been subject to much greater fluctuations.*
+
+Year over year changes show considerable fluctuations.  In particular, a significant drop for disciplinary Graduate and Tenure Track postion posting volume (and for interdisciplinary Postdoc postings) occurs in 2004, while the same trend appears absent from the disciplinary postdoc postings and from the interdisciplinary Tenure Track and Graduate postings.
+
+**Some of this may be due to a limitation of the modeling we apply currently.**  Andrea Dawson is taking a look at the model & will likely contribute a better model that should decompose the trends and take into account the temporal autocorrelation I can't presently get rid of.
 
 ## Discussion
 
@@ -225,9 +274,9 @@ Judging the intent of job advertisments and understanding the distinction betwee
 
 **Two paragraphs**
 
-* David, could you take the lead on this possibly?
-* More broad discussion about Ecolog
-  *increasing # of postings per year, esp. for graduate/postdoc jobs (perhaps what we really want to plot is proportion of interdisciplinary jobs?)
+  - **David, could you take the lead on this possibly?**
+  - broader discussion about Ecolog
+  * increasing # of postings per year, esp. for graduate/postdoc jobs (perhaps what we really want to plot is proportion of interdisciplinary jobs?)
   * increase in postdoc interdisc. jobs, esp 2005-2010, then level off? (similar pattern for graduate work?)
   * relatively flat trend for faculty t-t jobs (ony very slight increase?)
   * also the impact of economic issues (jobs during recession)
@@ -245,20 +294,9 @@ This dataset provides opportunities beyon understanding the state of the interdi
 
 * Summary of findings
 
-**Text Panel**
+##Acknowledgements
+SJG developed the idea behind this paper, contributed to the hand classification of postings, the bulk of the code and to writing and editing of this paper. SS helped with the framing, hand classification and writing of the paper. AD assisted with the framing, writing and statistical analysis (to do). DI contributed to the framing of the paper, assisted in writing and editing the draft paper.
 
-Job postings on Ecolog have increased along with the increase in posting volume since 2000, however the increase in total postings for graduate positions is much stronger than for any other job position. The seasonal trends vary between interdisciplinary and disciplinary positions, and across 
-
-```{r textbox, echo=FALSE, warning=FALSE, message=FALSE}
-ggplot(all_melt, aes(x = date, y = I(value/fail_job), color = variable)) + 
-  geom_smooth(span = 0.07, 
-              aes(linetype=int)) +
-  theme_bw() + facet_wrap(~variable) +
-  coord_cartesian(xlim=c(2000, 2015), expand=0)
-```
-
-  * Broad trends (seasonal patterns & decomposition)
-  * can see that peak timing for job advertisement differ tenure-track (earlier) vs. graduate/postdoc (later).
-
+This material is based upon work carried out by the PalEON Project (paleonproject.org) with support from the National Science Foundation MacroSystems Biology program under grant no. DEB-1241868. SJG would like to acknowledge NG, CG & AG in providing support for this analysis. **Add anything here**
 
 ##References

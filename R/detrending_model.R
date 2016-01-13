@@ -18,7 +18,7 @@ all_melt$class <- factor(all_melt$class) # This needs to be a class to get the "
 #  Ecolog.  The number of postdoc positions is increasing, but not nearly by as much.
 
 if('modeled.RDS' %in% list.files('data')){
-  modeled <- loadRDS('data/modeled.RDS')  
+  modeled <- readRDS('data/modeled.RDS')  
 } else {
   modeled <- gamm(value ~ s(week, by = full_class, bs= 'cc', k = 12) +
                    s(date, by = full_class, k = 15),
@@ -32,9 +32,9 @@ if('modeled.RDS' %in% list.files('data')){
 }
   
 if('modeled1.RDS' %in% list.files('data')){
-  modeled1 <- loadRDS('data/modeled1.RDS')  
+  modeled1 <- readRDS('data/modeled1.RDS')  
 } else {
-  modeled3 <- gamm(value ~ s(week, by = full_class, bs= 'cc', k = 25) +
+  modeled1 <- gamm(value ~ s(week, by = full_class, bs= 'cc', k = 25) +
                  s(date, by = full_class, k = 7),
                  random = list(class=~1),
                  method = 'REML',
@@ -46,7 +46,7 @@ if('modeled1.RDS' %in% list.files('data')){
 }
 
 if('modeled2.RDS' %in% list.files('data')){
-  modeled2 <- loadRDS('data/modeled2.RDS')  
+  modeled2 <- readRDS('data/modeled2.RDS')  
 } else {
   modeled2 <- gamm(value ~ s(week, by = full_class, bs= 'cc', k = 52) +
                      s(date, by = full_class),
@@ -59,10 +59,10 @@ if('modeled2.RDS' %in% list.files('data')){
   saveRDS(object = modeled2, file = 'data/modeled2.RDS')
 }
 
-layout(matrix(1:2, ncol = 2))
-res <- resid(modeled1$lme, type = "normalized")
-acf(res, lag.max = 1000, main = "ACF - AR(2) errors")
-pacf(res, lag.max = 1000, main = "pACF- AR(2) errors")
+#layout(matrix(1:2, ncol = 2))
+#res <- resid(modeled1$lme, type = "normalized")
+#acf(res, lag.max = 1000, main = "ACF - AR(2) errors")
+#pacf(res, lag.max = 1000, main = "pACF- AR(2) errors")
 
 # Shows model 1 is best.
 BIC(modeled$lme, modeled1$lme)
@@ -82,16 +82,39 @@ pred.output.p[pred.output.p == 0] <- NA
 
 pred_melt <- melt(pred.output.p, id.vars = c('year', 'week', 'date', 'full_class', 'class', 'inter'), na.rm = TRUE)
 
+pred_melt$class <- factor(pred_melt$class, labels = c("Graduate", 'Postdoctoral', 'Tenure Track'))
+
 # Weekly plot:
-ggplot(subset(pred_melt, regexpr('^fit.s.week', variable)>0 & year == 2000),
+week_plot <- ggplot(subset(pred_melt, regexpr('^fit.s.week', variable)>0 & year == 2000),
        aes(x = week, y = value, group = full_class, color = inter)) + 
   geom_path(size = 2) +
-  scale_color_brewer(type = 'qual') +
+  scale_color_brewer(type = 'qual', 
+                     guide  = guide_legend(title = "Interdisciplinary")) +
+  scale_x_continuous(breaks = c(8,20,32,44)) +
   facet_wrap(~class) + 
-  theme_bw()
+  theme_bw() +
+  xlab('Week of the Year') +
+  ylab('Contribution') +
+  coord_cartesian(xlim=c(1, 52), ylim=c(-1.15, 1.25), expand = FALSE) +
+  theme(axis.text = element_text(family='serif', size = 16),
+        axis.title = element_text(family='serif', size = 18, face = 'bold'),
+        #legend.text = element_text(family='serif', size = 14),
+        strip.text =  element_text(family='serif', size = 16, face = 'bold'))
 
-ggplot(subset(pred_melt, regexpr('^fit.s.date', variable)>0 & week == 1),
+ggsave(plot = week_plot, filename = 'figures/week_plot.tiff', width = 6, height = 4, dpi = 150)
+
+ann_plot <- ggplot(subset(pred_melt, regexpr('^fit.s.date', variable)>0 & week == 1),
        aes(x = date, y = value, group = full_class, color = inter)) + 
   geom_path(size = 2) +
-  scale_color_brewer(type = 'qual') +
-  facet_wrap(~class) + theme_bw()
+  scale_color_brewer(type = 'qual', 
+                     guide  = guide_legend(title = "Interdisciplinary")) +
+  facet_wrap(~class) + theme_bw() +
+  xlab('Year') +
+  ylab('Contribution') +
+  coord_cartesian(xlim=c(2000, 2014), ylim=c(-1.15, 1.25), expand = FALSE) +
+  theme(axis.text = element_text(family='serif', size = 16),
+        axis.title = element_text(family='serif', size = 18, face = 'bold'),
+        #legend.text = element_text(family='serif', size = 14),
+        strip.text =  element_text(family='serif', size = 16, face = 'bold'))
+
+ggsave(plot = ann_plot, filename = 'figures/ann_plot.tiff', width = 6, height = 4, dpi = 150)
