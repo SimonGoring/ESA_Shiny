@@ -3,6 +3,7 @@
 all_melt$week <- round(all_melt$date %% 1 * 52, 0) + 1
 all_melt$year <- floor(all_melt$date)
 all_melt$intweek <- all_melt$week + (all_melt$year - 2000) * 52
+all_melt$week_dec <- all_melt$week / 52
 
 colnames(all_melt)[2] <- "class"
 
@@ -103,7 +104,7 @@ week_plot <- ggplot(subset(pred_melt, regexpr('^fit.s.week', variable)>0 & year 
 
 ggsave(plot = week_plot, filename = 'figures/week_plot.tiff', width = 6, height = 4, dpi = 150)
 
-ann_plot <- ggplot(subset(pred_melt, regexpr('^fit.s.date', variable)>0 & week == 1),
+ann_plot <- ggplot(subset(pred_melt, regexpr('^fit.s.date', variable)>0 & week == 26),
        aes(x = date, y = value, group = full_class, color = inter)) + 
   geom_path(size = 2) +
   scale_color_brewer(type = 'qual', 

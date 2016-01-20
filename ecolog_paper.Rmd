@@ -107,13 +107,19 @@ We classified `r nrow(all_runs)` records by hand using a Shiny [@chang2015shiny]
 
 Using the surveyed messages, we built a model using a random forest to classify them as tenure track jobs, postdoctoral positions and graduate positions, and to test whether they indicate interdisciplinarity [package *randomForest*; @LiawWiener2002RF].  Based on the model constructed we then predict the class of the remaining messages to build a time series of job ads.  Because hand coding messages was an iterative process, we used the confusion matrix from the predictive models to weight Ecolog messages selected for display and classification in the Shiny app.  Messages that were predicted to be interdisciplinary from the partial models were weighted most highly, as were messages with high rates of confusion for tenure track, postdoctoral or graduate positions.
 
-Once all Ecolog messages were classified using the RF model, a Generalized Additive Model was applied [`gamm` in the package `mgcv`: @wood2004gamm].  A binomial model is constructed, using the employment class as a random effect, with the week of the year (1 - 52) modeled using a cyclic penalized cubic spline that varies by employment class.  This model then allows us to examine the trends in each employment class, over the 15 years of data.  Since there is a gradual trend in uptake in the use of Ecolog as a message board, and since individual weeks and years are unlikely to be independent, we tested several correlational structures and found an `ARMA(1)` (using the year of the message) to provide the best modeling support.
+Once all Ecolog messages were classified using the RF model, a Generalized Additive Model was applied [`gamm` in the package `mgcv`: @wood2004gamm].  A binomial model was constructed, using the employment class as a random effect, with the week of the year (1 - 52) modeled using a cyclic penalized cubic spline that varies by employment class.  This model then allowed us to examine the trends in each employment class, over the 15 years of data.  Because there is a gradual increase in the use of Ecolog, and because individual weeks and years are unlikely to be independent, we tested several correlational structures and found an `ARMA(1)` (using the year of the message) to provide the best modeling support.
 
 ##Results
 
 Ecolog returns `r nrow(dtm.s99) - sum(rowSums(dtm.s99) == 0)` messages for the period from January 2000 to January 2015.  Cleaning & stemming the individual words in the messages leaves with a set of `r ncol(dtm.s99)` unique terms.
 
-The frequency of terms in the Ecolog corpus follows a log distribution.  The most frequent terms ('will', n=`r colSums(dtm.s99)["will"]`; 'research', n=`r colSums(dtm.s99)["research"]`; university, n=`r colSums(dtm.s99)["university"]`; 'field', n=`r colSums(dtm.s99)["field"]`; and 'ecology', n=`r colSums(dtm.s99)["ecology"]`) have much higher frequencies than the mean ($u_{terms}$ = `r mean(colSums(dtm.s99))`).  Because the term matrix was constrained to the top 1% of all terms, the least common words in the term matrix ('enjoy', 'helpful' and 'speaking') still occur several hundreds of times (all n=`r sort(colSums(dtm.s99))[1]`).
+```{r simpleTermSort, echo=FALSE, message = FALSE, warning=FALSE}
+
+sort_term <- sort(colSums(dtm.s99), decreasing = TRUE)
+
+```
+
+The frequency of terms in the Ecolog corpus follows a log distribution.  The most frequent terms (`r names(sort_term)[1]`, n=`r sort_term[1]`; `r names(sort_term)[2]`, n=`r sort_term[2]`; `r names(sort_term)[3]`, n=`r sort_term[3]`; `r names(sort_term)[4]`, n=`r sort_term[4]`; and `r names(sort_term)[5]`, n=`r sort_term[5]`) have much higher frequencies than the mean ($u_{terms}$ = `r mean(colSums(dtm.s99))`).  Because the term matrix was constrained to the top 1% of all terms, the least common words in the term matrix still occur several hundreds of times (`r names(sort_term)[length(sort_term)]`, n=`r sort(colSums(dtm.s99))[1]`).
 
 **Table 1**. *Cross-over between terms in the top 95%ile of importance for the random forest model between classification models for Tenure-Track, Postdoctoral, and Graduate positions, as well as for Interdisciplinary positions.*
 
@@ -137,7 +143,7 @@ pander(cross_over[-1,-4], split.tables = Inf)
 
 ```
 
-Four independent random forest models were also constructed to enable us to assess term importance for each individual employment class and for interdisciplinary postings.  While the overall model (7 classes) has an out of bag error estimate of 18.4%, the higest error rates within any one class occur between classes and their "interdisciplinary" alternative.  This indicates higher rates of uncertainty within classes, and particularly, potential differences in the terms used for interdisciplinarity between job classes.
+Four independent random forest models were also constructed to enable us to assess term importance for each individual employment class and for interdisciplinary postings.  While the overall model (7 classes) has an out-of-bag error estimate of 18.4%, the highest error rates within any one class occur between classes and their "interdisciplinary" alternative.  This indicates higher rates of uncertainty within classes, and particularly, potential differences in the terms used for interdisciplinarity between job classes.
 
 **Table 2.**  *Confusion matrix for the complete random forest model. The confusion matrix shows the hand classified coding in rows and the model classifications in the columns. For example, of the 64 postings classified as "interdisciplinary tenure track" (TT_Int), the random forest model classified one message as a graduate student position, one as an interdisciplinary postdoctoral position (PD_Int) and 13 as non-interdisciplinary Tenure track positions. The Class Error is the proportion of incorrectly classified samples for any one class.*
 ```{r echo=FALSE, results='as-is', message=FALSE, warning=FALSE}
@@ -148,7 +154,7 @@ pander(full.rf$confusion, round = 2, split.tables = Inf)
 
 The random forest model provides an importance table, indicating the utility of a term in classifying individual messages into the various classes.  The importance value represents the mean decrease in the Gini index across trees when the particular variable is used as a classifier. The tables themselves are very long, but rank of individual terms can provide some insight into the processes underlying the hiring trends in ecology.  Tenure-track and postdoctoral positions show higher cross-over of high-importance terms than do tenure-track and graduate positions (or postdoctoral and graduate positions).  Both graduate and postdoctoral positions show much higher cross-over with interdisciplinary terms than do terms of importance for tenure-track postings.
 
-**Table 2**. *Importance terms for the classification of Tenure Track, Postdoctoral, and Graduate student positions.  Bolded terms represent terms that are unique within the top 99%ile of terms.  Many of the top key terms for positions relate specifically to those positions (tenure track, graduate).*
+**Table 2**. *Importance terms for the classification of Tenure Track, Postdoctoral, and Graduate student positions.  Terms are sorted in order of relative importance from top (most important) to bottom (lower importance). Bolded terms represent terms that are unique within the top 99%ile of terms for the class. Many of the top key terms for positions relate specifically to those positions (tenure track, graduate).*
 
 ```{r importance_table, echo=FALSE, warning = FALSE, message=FALSE, result = 'as-is'}
 
@@ -166,9 +172,9 @@ pander(imp_table, split.tables = Inf)
 
 ```
 
-The random forest model to explicitly identify tenure-track positions indicates that terms of high importance include "tenuretrack" (indicating the removal of a hyphen), "assistant", "professor" and "undergraduate" (Table 2). For postdoctoral positions, the model identifies "postdoctoral", "position", and "research" as most important.  The key term in this case is "interdisciplinary".  We're really looking at interdisciplinary jobs here, so it's no surprise that terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a much higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
+The random forest model to identify explicitly tenure-track positions indicates that terms of high importance include "tenuretrack" (indicating the removal of a hyphen), "assistant", "professor" and "undergraduate" (Table 2). For postdoctoral positions, the model identifies "postdoctoral", "position", and "university" as most important.  In the case of "interdisciplinary" terms, and because we're limiting classification to interdisciplinary jobs, terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
 
-Job postings on Ecolog have increased along with the increase in posting volume since 2000, however the increase in total postings as a proportion of job postings for graduate positions is much stronger than for any other job position (**Figure X**).
+Job postings on Ecolog have increased along with the increase in posting volume since 2000 (`r`), however the increase in total postings as a proportion of job postings for graduate positions is much stronger than for any other job position (**Figure X**).
 
 ```{r textbox, echo=FALSE, warning=FALSE, message=FALSE, width = 6, height = 4}
 
@@ -208,10 +214,11 @@ source('R/detrending_model.R')
 
 all_melt$class <- factor(all_melt$class, labels = c("Graduate", 'Postdoctoral', 'Tenure Track'))
 
-ggplot(all_melt, aes(x = date, y = I(value/(fail_msg+value)), color = class)) + 
+ggplot(all_melt, aes(x = date, y = I(value/(fail_msg+value)))) + 
+  geom_point(aes(color = int), alpha = 0.5) +
   geom_smooth(span = 0.08, 
               aes(linetype=int),
-              se=FALSE) +
+              se=FALSE, size = 2) +
   theme_bw() + facet_wrap(~class) +
   scale_linetype_discrete(guide = guide_legend(title = "Interdisciplinary")) +
   scale_color_brewer(type='qual', 
@@ -226,7 +233,6 @@ ggplot(all_melt, aes(x = date, y = I(value/(fail_msg+value)), color = class)) +
         #legend.text = element_text(family='serif', size = 14),
         strip.text =  element_text(family='serif', size = 16, face = 'bold'))
 
-
 ```
 
 **Figure X.** *Job postings as a proportion of all postings on ECOLOG. Postings for graduate student positions increase strongly from 2000 - 2015 as do postdoctoral position postings.  Tenure track postings appear to remain relatively stable through time.  Interdisciplinary postings remain low through time and appear to increase at a rate equal to, or lower than the disciplinary postings.*
@@ -237,7 +243,7 @@ Seasonal trends suggest differences in timing and intensity for the different jo
 
 **Figure X**. *The seasonal trend in position posting shows differences between job classes, and between interdisciplinary and disciplinary postings. Panels represent job types and line coloring indicates whether a position in interdisciplinary (purple) or disciplinary (green).  Positive values suggest higher than average posting proportions.  The model is derived using a generalized additive mixed model, with job class as a random effect and a one year ARMA lag.*
 
-All three types of postings appear somewhat bimodal, wheras the major peak for Tenure Track and Postdoctoral jobs occurs in November, the secondary peak is in the early spring, coincident with the Graduate position peak.
+All three types of postings appear somewhat bimodal, whereas the major peak for Tenure Track and Postdoctoral jobs occurs in November, the secondary peak is in the early spring, coincident with the Graduate position peak.
 
 For interdisciplinary positions the amplitude of the seasonal trend is much lower and there appears to be a shift from bimodal to unimodal posting seasonality.
 
