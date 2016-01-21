@@ -1,9 +1,7 @@
 # Detrending the model:
 
-all_melt$week <- round(all_melt$date %% 1 * 52, 0) + 1
+all_melt$month <- round(all_melt$date %% 1 * 12, 0) + 1
 all_melt$year <- floor(all_melt$date)
-all_melt$intweek <- all_melt$week + (all_melt$year - 2000) * 52
-all_melt$week_dec <- all_melt$week / 52
 
 colnames(all_melt)[2] <- "class"
 

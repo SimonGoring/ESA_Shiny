@@ -185,9 +185,11 @@ rep.row<-function(x,n){
 # This is where we pull out the date.  For each list in all.messages (representing a
 # unique week), provide the numeric week value.
 
-weeks <- do.call(rbind.data.frame, sapply(1:length(all.messages),function(x)rep.row(myw2[x,],length(all.messages[[x]]))))
+weeks <- do.call(rbind.data.frame,
+                 sapply(1:length(all.messages),
+                        function(x)rep.row(myw2[x,],length(all.messages[[x]]))))
 
-all_preds <- data.frame(date = unlist(weeks[,3]) + (unlist(weeks[,2]) + unlist(weeks[,1])/4)/12,
+all_preds <- data.frame(date = unlist(weeks[,3]) + (unlist(weeks[,2]))/12,
                         prediction = predict_al,
                         count = 1)
 
