@@ -24,8 +24,10 @@ ggplot(dat_org) + geom_line(data=dat_org, aes(x=date, y=(total-int)/total)) + fa
 ggplot(dat_org) + geom_line(data=dat_org, aes(x=date, y=(int)/total)) + facet_grid(class~.)
 
 
-levels(dat_org$class) <- c('GR', 'PD', 'TT')
+# prop nint to total
+ggplot(dat_org) + geom_line(data=dat_org, aes(x=date, y=(total-int)/total, colour=class)) #+ facet_grid(class~.)
 
+levels(dat_org$class) <- c('GR', 'PD', 'TT')
 
 #####################################################################################################################
 ## GR
@@ -58,3 +60,29 @@ m1 <- sarima(gr_dat$nint_p, 0, 0, 0, 0, 1, 1, 12)
 plot(resid(m1$fit))
 sarima.for(gr_dat$nint_p, 40, 1, 1, 0, 0, 1, 1, 12)
 # sarima.for(gr_p, -24, 2, 0, 0, 0, 1, 1, 12)
+
+#####################################################################################################################
+## PD
+#####################################################################################################################
+pd_dat = dat_org[which(dat_org$class == 'PD'),]
+pd_dat = pd_dat[order(pd_dat$date),]
+
+pd_dat$nint_p = pd_dat$nint/pd_dat$total
+
+plot(pd_dat$date, pd_dat$nint_p, type='l') 
+acf(pd_dat$nint_p, lag.max=40) 
+pacf(pd_dat$nint_p, lag.max=40)
+lag.plot(pd_dat$nint_p, lags=12)
+
+#####################################################################################################################
+## TT
+#####################################################################################################################
+tt_dat = dat_org[which(dat_org$class == 'TT'),]
+tt_dat = tt_dat[order(tt_dat$date),]
+
+tt_dat$nint_p = tt_dat$nint/tt_dat$total
+
+plot(tt_dat$date, tt_dat$nint_p, type='l') 
+acf(tt_dat$nint_p, lag.max=40) 
+pacf(tt_dat$nint_p, lag.max=40)
+lag.plot(tt_dat$nint_p, lags=12)
