@@ -2,7 +2,7 @@
 title: "Outline and Methods"
 author: "Simon J. Goring, Sarah R. Supp"
 date: "March 16, 2015"
-output: html_document
+output: pdf_document
 ---
 
 This document acts as an outline for a project intended to highlight patterns of academic hiring in ecology, particularly for interdisciplinary-focused positions, based on publication in the [ECOLOG mailing list](https://listserv.umd.edu/archives/ecolog-l.html).

@@ -43,24 +43,6 @@ Corresponding author: Simon Goring - goring@wisc.edu
 
 *Clear patterns of hiring seasonality are apparent in the data that may be of use to other researchers. Our results indicate that since 2000 the number of pre-tenure and tenure track positions advertising for interdisciplinary scholars has increased.  Rates of advertising for interdisciplinary tenure track positions are lower than rates of advertising for interdisciplinary graduate and postdoctoral positions.  While the rate of advertising tells us little about the actual hiring practice, it is a vetted process that often results from a committee of individuals making explicit decisions about how the position is to be filled.  Our results point to an evolving system of interdisciplinarity within the ecological sciences, interdisciplinarity by proxy, whereby disciplinary researchers hire graduate or postdoctoral students to conduct research into interdisciplinary hypotheses, but, possibly, seek out disciplinary researchers as colleagues at the tenured level.*
 
-##Formatting Instructions:
-
-Research Communication:
-
-  -  relatively short, high-impact primary research papers, with implications for policy making and resource management
-  - Topics should have broad, interdisciplinary appeal
-  - Research Communications should always be divided into the standard IMRAD sections: Introduction, Methods and Materials, Results, Conclusions
-  - Text should be understandable not only to ecologists and environmental scientists but also to those in related disciplines
-  - Length: about 150 words for the abstract, **2500 words** (currently at 3400 words), not including a short abstract, not more than **20 references** (currently at 28 references), and a total of 3 figures, tables, and/or panels
-  - A limited number of additional figures, tables, and/or panels may be included as Web-only material for the journal’s website; however, if this material exceeds four journal pages, an additional page charge will be added to the cost of publication. Alternatively, very large datasets or other long or complex material can be included as pdfs; these will not be converted to the journal’s design style
-  - Writing style must be crisp, concise, and accessible, and should avoid or explain all terminology and concepts that might be unfamiliar to a multidisciplinary readership
-  - Content should involve one or more of the following:
-    - Research with important policy or resource management implications (this should be an underlying theme in all Frontiers papers and should be reflected in a strong Conclusions section, involving a discussion of  these implications)
-    - Research with practical applications
-    - Global environmental or resource issues
-    - Fundamental, novel advances in ecological science or related areas
-    - Use of new approaches, techniques, or technologies to address current and/or long-standing ecological/environmental issues
-
 ##Introduction
 
 Interdisciplinarity has been receiving increased attention in the sciences, both as a method of studying key processes, but also as a subject of interest in and of itself. Part of this increased attention is the result of improved access to data and tools that allow researchers to address the complex set of problems facing modern ecologists, where biological responses intersect with land use change, climate change, changes in biogeophysical processes, and human interactions [@heffernan2014macrosystems; @dawson2011beyond; @goring2014improving; @basche2014challenges; @white2015next]. To help support the increased need for interdisciplinary approaches in research, a number of training programs and funding sources have been structured to address needs at the graduate and post-doctoral levels [@schmidt2012new;@wagner2012developing;@stamp2015preparing;@hibbert2014quest], and new models for promoting and improving interdisciplinarity within academia have been proposed [@goring2014improving;@ciannelli2014transdisciplinary;@cheruvelil2014creating], but challenges and questions remain.
@@ -146,6 +128,7 @@ pander(cross_over[-1,-4], split.tables = Inf)
 Four independent random forest models were also constructed to enable us to assess term importance for each individual employment class and for interdisciplinary postings.  While the overall model (7 classes) has an out-of-bag error estimate of 18.4%, the highest error rates within any one class occur between classes and their "interdisciplinary" alternative.  This indicates higher rates of uncertainty within classes, and particularly, potential differences in the terms used for interdisciplinarity between job classes.
 
 **Table 2.**  *Confusion matrix for the complete random forest model. The confusion matrix shows the hand classified coding in rows and the model classifications in the columns. For example, of the 64 postings classified as "interdisciplinary tenure track" (TT_Int), the random forest model classified one message as a graduate student position, one as an interdisciplinary postdoctoral position (PD_Int) and 13 as non-interdisciplinary Tenure track positions. The Class Error is the proportion of incorrectly classified samples for any one class.*
+
 ```{r echo=FALSE, results='as-is', message=FALSE, warning=FALSE}
 
 pander(full.rf$confusion, round = 2, split.tables = Inf)
@@ -154,7 +137,7 @@ pander(full.rf$confusion, round = 2, split.tables = Inf)
 
 The random forest model provides an importance table, indicating the utility of a term in classifying individual messages into the various classes.  The importance value represents the mean decrease in the Gini index across trees when the particular variable is used as a classifier. The tables themselves are very long, but rank of individual terms can provide some insight into the processes underlying the hiring trends in ecology.  Tenure-track and postdoctoral positions show higher cross-over of high-importance terms than do tenure-track and graduate positions (or postdoctoral and graduate positions).  Both graduate and postdoctoral positions show much higher cross-over with interdisciplinary terms than do terms of importance for tenure-track postings.
 
-**Table 2**. *Importance terms for the classification of Tenure Track, Postdoctoral, and Graduate student positions.  Terms are sorted in order of relative importance from top (most important) to bottom (lower importance). Bolded terms represent terms that are unique within the top 99%ile of terms for the class. Many of the top key terms for positions relate specifically to those positions (tenure track, graduate).*
+**Table 3**. *Importance terms for the classification of Tenure Track, Postdoctoral, and Graduate student positions.  Terms are sorted in order of relative importance from top (most important) to bottom (lower importance). Bolded terms represent terms that are unique within the top 99%ile of terms for the class. Many of the top key terms for positions relate specifically to those positions (tenure track, graduate).*
 
 ```{r importance_table, echo=FALSE, warning = FALSE, message=FALSE, result = 'as-is'}
 
@@ -170,13 +153,6 @@ imp_table <- apply(imp_table, 2, function(x){x[!x %in% unlist(imp_table)[duplica
 
 pander(imp_table, split.tables = Inf)
 
-```
-
-The random forest model to identify explicitly tenure-track positions indicates that terms of high importance include "tenuretrack" (indicating the removal of a hyphen), "assistant", "professor" and "undergraduate" (Table 2). For postdoctoral positions, the model identifies "postdoctoral", "position", and "university" as most important.  In the case of "interdisciplinary" terms, and because we're limiting classification to interdisciplinary jobs, terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
-
-Job postings on Ecolog have increased along with the increase in posting volume since 2000 (`r`), however the increase in total postings as a proportion of job postings for graduate positions is much stronger than for any other job position (**Figure X**).
-
-```{r textbox, echo=FALSE, warning=FALSE, message=FALSE, width = 6, height = 4}
 
 rep.row<-function(x,n){
    matrix(rep(x,each=n),nrow=n)
@@ -187,9 +163,19 @@ rep.row<-function(x,n){
 
 weeks <- do.call(rbind.data.frame,
                  sapply(1:length(all.messages),
-                        function(x)rep.row(myw2[x,],length(all.messages[[x]]))))
+                        function(x)(rep.row(myw2[x,],length(all.messages[[x]])))))
 
-all_preds <- data.frame(date = unlist(weeks[,3]) + (unlist(weeks[,2]))/12,
+weeks <- apply(weeks, 2, as.numeric)
+
+```
+
+The random forest model to identify explicitly tenure-track positions indicates that terms of high importance include "tenuretrack" (indicating the removal of a hyphen), "assistant", "professor" and "undergraduate" (Table 2). For postdoctoral positions, the model identifies "postdoctoral", "position", and "university" as most important.  In the case of "interdisciplinary" terms, and because we're limiting classification to interdisciplinary jobs, terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
+
+Job postings on Ecolog have increased along with the increase in posting volume since 2000, however the increase in total postings as a proportion of job postings for graduate positions is much stronger than for any other job position (**Figure 2**).
+
+```{r textbox, echo=FALSE, warning=FALSE, message=FALSE, width = 6, height = 4}
+
+all_preds <- data.frame(date = (weeks[,3] + weeks[,2])/12,
                         prediction = predict_al,
                         count = 1)
 
@@ -237,13 +223,13 @@ ggplot(all_melt, aes(x = date, y = I(value/(fail_msg+value)))) +
 
 ```
 
-**Figure X.** *Job postings as a proportion of all postings on ECOLOG. Postings for graduate student positions increase strongly from 2000 - 2015 as do postdoctoral position postings.  Tenure track postings appear to remain relatively stable through time.  Interdisciplinary postings remain low through time and appear to increase at a rate equal to, or lower than the disciplinary postings.*
+**Figure 2.** *Job postings as a proportion of all postings on ECOLOG. Postings for graduate student positions increase strongly from 2000 - 2015 as do postdoctoral position postings.  Tenure track postings appear to remain relatively stable through time.  Interdisciplinary postings remain low through time and appear to increase at a rate equal to, or lower than the disciplinary postings.*
 
-Seasonal trends suggest differences in timing and intensity for the different job classes (Figure).  In all cases the amplitude of the disciplinary curve is much higher than the amplitude of the interdisciplinary curve, although this may be, in part, a function of the total number of postings.  The timing of peak posting and the lowest rates of posting also varies by class.  The lowest proportion of postings for graduate positions occurs at the end of July (as with Postdoctoral positions), while the lowest volume for Tenure Track positions occurs a month earlier in June.  The peak time of tenure track posting occurs in mid-November (similar to Postdoctoral postings), while the graduate posting peak appears to be broader, with a peak in late February.
+Seasonal trends suggest differences in timing and intensity for the different job classes (Figure 3).  In all cases the amplitude of the disciplinary curve is much higher than the amplitude of the interdisciplinary curve, although this may be, in part, a function of the total number of postings.  The timing of peak posting and the lowest rates of posting also varies by class.  The lowest proportion of postings for graduate positions occurs at the end of July (as with Postdoctoral positions), while the lowest volume for Tenure Track positions occurs a month earlier in June.  The peak time of tenure track posting occurs in mid-November (similar to Postdoctoral postings), while the graduate posting peak appears to be broader, with a peak in late February.
 
 ![weeklychange](figures/week_plot.tiff)
 
-**Figure X**. *The seasonal trend in position posting shows differences between job classes, and between interdisciplinary and disciplinary postings. Panels represent job types and line coloring indicates whether a position in interdisciplinary (purple) or disciplinary (green).  Positive values suggest higher than average posting proportions.  The model is derived using a generalized additive mixed model, with job class as a random effect and a one year ARMA lag.*
+**Figure 3**. *The seasonal trend in position posting shows differences between job classes, and between interdisciplinary and disciplinary postings. Panels represent job types and line coloring indicates whether a position in interdisciplinary (purple) or disciplinary (green).  Positive values suggest higher than average posting proportions.  The model is derived using a generalized additive mixed model, with job class as a random effect and a one year ARMA lag.*
 
 All three types of postings appear somewhat bimodal, whereas the major peak for Tenure Track and Postdoctoral jobs occurs in November, the secondary peak is in the early spring, coincident with the Graduate position peak.
 
@@ -251,7 +237,7 @@ For interdisciplinary positions the amplitude of the seasonal trend is much lowe
 
 ![annualchange](figures/ann_plot.tiff)
 
-**Figure X** *Annual trend for Ecolog job postings.  Overall there is a trend of increasing total postings for each job class, with interdisciplinary postings increasing at a lower rate for graduate and postdoctoral students than for tenure track positions, which have been subject to much greater fluctuations.*
+**Figure 4** *Annual trend for Ecolog job postings.  Overall there is a trend of increasing total postings for each job class, with interdisciplinary postings increasing at a lower rate for graduate and postdoctoral students than for tenure track positions, which have been subject to much greater fluctuations.*
 
 Year over year changes show considerable fluctuations.  In particular, a significant drop for disciplinary Graduate and Tenure Track postion posting volume (and for interdisciplinary Postdoc postings) occurs in 2004, while the same trend appears absent from the disciplinary postdoc postings and from the interdisciplinary Tenure Track and Graduate postings.
 
