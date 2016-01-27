@@ -23,9 +23,10 @@ ggplot(dat_org) + geom_line(data=dat_org, aes(x=date, y=(total-int)/total)) + fa
 # prop int to total
 ggplot(dat_org) + geom_line(data=dat_org, aes(x=date, y=(int)/total)) + facet_grid(class~.)
 
-
 # prop nint to total
 ggplot(dat_org) + geom_line(data=dat_org, aes(x=date, y=(total-int)/total, colour=class)) #+ facet_grid(class~.)
+# prop int to total
+ggplot(dat_org) + geom_line(data=dat_org, aes(x=date, y=int/total, colour=class)) #+ facet_grid(class~.)
 
 levels(dat_org$class) <- c('GR', 'PD', 'TT')
 
