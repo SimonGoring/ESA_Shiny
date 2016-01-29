@@ -175,7 +175,7 @@ Job postings on Ecolog have increased along with the increase in posting volume 
 
 ```{r textbox, echo=FALSE, warning=FALSE, message=FALSE, width = 6, height = 4}
 
-all_preds <- data.frame(date = (weeks[,3] + weeks[,2])/12,
+all_preds <- data.frame(date = weeks[,3] + weeks[,2]/12,
                         prediction = predict_al,
                         count = 1)
 
@@ -198,9 +198,12 @@ all_melt$variable <- substr(all_melt$variable, 1,2)
 all_melt$fail_job <- total.job[match(all_melt$date, all_cast$date)] - all_melt$value
 all_melt$fail_msg <- total.msg[match(all_melt$date, all_cast$date)] - all_melt$value
 
+
 source('R/detrending_model.R')
 
-all_melt$class <- factor(all_melt$class, labels = c("Graduate", 'Postdoctoral', 'Tenure Track'))
+all_melt$class <- factor(all_melt$variable, labels = c("Graduate", 'Postdoctoral', 'Tenure Track'))
+
+saveRDS(all_melt, 'data/all_melt.RDS')
 
 ggplot(all_melt, aes(x = date, y = I(value/(fail_msg+value)))) + 
   geom_point(aes(color = int), alpha = 0.5) +

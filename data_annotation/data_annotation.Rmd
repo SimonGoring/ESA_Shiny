@@ -1,0 +1,63 @@
+---
+title: "Data Annotation"
+author: "Interdisciplinary Team"
+date: "January 27, 2016"
+output: html_document
+---
+
+```{r echo=FALSE}
+library(ggplot2)
+library(reshape2)
+```
+
+Some summaries of the hand classification:
+```{r hand_classified}
+good_runs <- data.frame(subset(all_runs, msg < 55778),
+                        variable = NA)
+
+# Anything that indicates a job:
+class_week <- subset(melt(good_runs, measure.vars = c(3,6,7), id.vars = 1), value == TRUE)
+
+class_week <- data.frame(class_week, apply(weeks, 2, as.numeric)[class_week$msg,])
+class_week$date <- class_week$V2/12 + class_week$V3
+
+multi_class <- which(rowSums(table(class_week[,1:2])>0)>1)
+
+hand_weeks <- apply(weeks[good_runs$msg,], 2, as.numeric)
+
+
+ggplot(class_week) + geom_bar(aes(x = date, fill = variable)) + 
+  facet_wrap(~variable, ncol = 1) + 
+  coord_cartesian(xlim=c(2000, 2015), expand = FALSE) +
+  theme_minimal() +
+  theme(legend.position = 'none')
+
+```
+
+The number of messages hand classified by month, by class (gp - Graduate; tt - tennure track)
+
+
+Out of the `r nrow(all_runs)` messages, there are `r length(multi_class)` messages that have been classified into more than one job class.  In every case, except one it is a position that is classed as both "Graduate" and "Postdoc".  In the other case it's a tenure-track/postdoc posting.
+
+Most of these are joint postings looking for either a postdoc or a high quality doctoral student.
+
+```{r classified_by_class, echo = FALSE}
+
+all_dat = readRDS('data/all_melt.RDS')
+
+ggplot(all_dat) + 
+  geom_bar(aes(x = date, y = value), stat='identity') +
+  facet_wrap(~class, ncol = 1) +
+  theme_minimal()
+
+```
+**Figure 1**. Posting volume for job adds in each class.
+
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
