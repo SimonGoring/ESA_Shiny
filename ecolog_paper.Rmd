@@ -1,16 +1,14 @@
 ---
-title: "Interdiscplinary ECOLOG"
+title: "Interdiscplinary Ecolog"
 author: "Simon Goring and Sarah Supp"
-date: '`r format(Sys.time(), ''%d %B, %Y'')`'
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  html_document: default
+  word_document:
   md_document:
     variant: markdown_github
   pdf_document:
     pandoc_args: -V geometry:vmargin=1in -V geometry:hmargin=1in
-  word_document:
-    fig_height: 6
-    fig_width: 6
+  html_document: default
 csl: ecology.csl
 pandoc_args: -H margins.sty
 bibliography: ecolog_paper.bib
@@ -22,10 +20,18 @@ Simon J. Goring^1^
 
 Sarah Supp^2^
 
+David Inouye^3^
+
+Andria Dawson^4^
+
 
 ^1^ Department of Geography, University of Wisconsin - Madison
 
 ^2^ School of Biology and Ecology, University of Maine
+
+^3^ Department of Biology, University of Maryland, College Park
+
+^4^ University of Arizona
 
 Corresponding author: Simon Goring - goring@wisc.edu
 
@@ -33,41 +39,33 @@ Corresponding author: Simon Goring - goring@wisc.edu
 
 *Increasing emphasis has been placed on training interdisciplinary scientists in the ecological sciences.  While ecology has historically been viewed as an interdisciplinary science, there is an increasing push to borrow deeply from related disciplines in an effort to tackle the "wicked problems" that require interdisciplinary solutions.*
 
-*Using postings from ECOLOG, a mailing list strongly associated with the Ecological Society of America, we examine patterns of hiring for graduate and tenure track positions.  We use text mining and a machine learning algorithm (random forest), trained on manually classified data to estimate rates of posting for interdisciplinary positions at the tenure track and graduate/postdoctoral level.*
+*Using postings from ECOLOG-L, a LISTSERV strongly associated with the Ecological Society of America, we examine patterns of hiring for graduate and tenure track positions.  We use text mining and a machine learning algorithm (random forest), trained on manually classified data to estimate rates of posting for interdisciplinary positions at the tenure-track and graduate/postdoctoral level.*
 
 *Clear patterns of hiring seasonality are apparent in the data that may be of use to other researchers. Our results indicate that since 2000 the number of pre-tenure and tenure track positions advertising for interdisciplinary scholars has increased.  Rates of advertising for interdisciplinary tenure track positions are lower than rates of advertising for interdisciplinary graduate and postdoctoral positions.  While the rate of advertising tells us little about the actual hiring practice, it is a vetted process that often results from a committee of individuals making explicit decisions about how the position is to be filled.  Our results point to an evolving system of interdisciplinarity within the ecological sciences, interdisciplinarity by proxy, whereby disciplinary researchers hire graduate or postdoctoral students to conduct research into interdisciplinary hypotheses, but, possibly, seek out disciplinary researchers as colleagues at the tenured level.*
 
 ##Introduction
 
-Interdisciplinarity has been receiving increased attention in the sciences, both as a method of studying key processes, but also as a subject of interest in and of itself. Part of this increased attention is the result of improved access to data and tools that allow researcheres to address the complex set of problems facing modern ecologists, where biological responses intersect with land use change, climate change, changes in biogeophysical processes, and human interactions [@heffernan2014macrosystems; dawson2011beyond; @goring2014improving;@basche2014challenges;@white2015next]. To help support the increased need for interdisciplinary approaches in research, a number of training programs and funding sources have been structured to address needs at the graduate and post-doctoral level [@schmidt2012new;@wagner2012developing;@stamp2015preparing;@hibbert2014quest], and new models for promoting interdisciplinary work within academia have been proposed [@goring2014improving], but challenges and questions remain.
+Interdisciplinarity has been receiving increased attention in the sciences, both as a method of studying key processes, but also as a subject of interest in and of itself. Part of this increased attention is the result of improved access to data and tools that allow researchers to address the complex set of problems facing modern ecologists, where biological responses intersect with land use change, climate change, changes in biogeophysical processes, and human interactions [@heffernan2014macrosystems; @dawson2011beyond; @goring2014improving; @basche2014challenges; @white2015next]. To help support the increased need for interdisciplinary approaches in research, a number of training programs and funding sources have been structured to address needs at the graduate and post-doctoral levels [@schmidt2012new;@wagner2012developing;@stamp2015preparing;@hibbert2014quest], and new models for promoting and improving interdisciplinarity within academia have been proposed [@goring2014improving;@ciannelli2014transdisciplinary;@cheruvelil2014creating], but challenges and questions remain.
 
-Perceptions of risk for researchers engaged in interdisciplinary research are real [@fischer2012pretenure], particularly for early career researchers, and must be addressed within academia. These risks are often balanced by the promise of doing exciting work, greater likelihood of future collaboration [@hampton2011collaboration] and others (*need to fill out - ending on "and others" is a weak statement*). Hibbert *et al*. [-@hibbert2014quest] decribe the optimism of Doctoral students who feel that their interdisciplinary experience has created a unique niche for them through narrative analysis, but also indicate that interdisciplinary students may feel lost on their "quest" without adequate supervision. Ultimately, it is unclear the extent to which the trend toward increasing interdisciplinarity within graduate training programs is playing itself out at the faculty level. Certainly, interdisciplinary programs provide greater support for non-traditional outcomes for many of their students, but interdisciplinary research is often supported by tenured or tenure track researchers who may or may not themselves be a product of interdisciplinary research programs.
+Perceptions of risk for researchers engaged in interdisciplinary research are real, particularly for early career researchers [@fischer2012pretenure], and must be addressed within academia. These risks are often balanced by the promise of doing exciting work, greater likelihood of future collaboration [@hampton2011collaboration], higher rates of publication [@porter2012research; but see @van2015interdisciplinary], and, higher rates of funding [@bellotti2012getting]. Hibbert *et al*. [-@hibbert2014quest] use narrative analysis to describe the optimism of Doctoral students who feel that their interdisciplinary experience has created a unique niche for them, but also indicate that interdisciplinary students may feel lost on their "quest" without adequate supervision. Ultimately, it is unclear the extent to which the trend toward increasing interdisciplinarity within graduate training programs is playing itself out at the faculty level, especially given that some data on interdisciplinary collaboration points to explicit costs to the interdisciplinary researcher [@goring2014improving; @van2011factors; @van2015interdisciplinary]. There is a role for increased integration between traditional academic & non-academic outcomes within interdisciplinary programs [@ciannelli2014transdisciplinary], but interdisciplinary research itself is often supported by tenured or tenure track researchers who may or may not themselves be a product of interdisciplinary research programs.
 
-**I need to address some of the simplifications I'm making here.**
+While ecology is often perceived as being highly interdisciplinary, publications patterns do not necessarily reflect this belief [@van2015interdisciplinary; @romolini2013next].  Regardless, it is important to clarify what is meant by interdisciplinarity in the context of this paper, and in the broader discussion.  Multiple terms are used to describe disciplinarity, primarily "multidisciplinary", "interdisciplinary" and "transdisciplinary".  Choi and Pak [-@choi2006multidisciplinarity] provide a unique framing for the three models: **Multidisciplinary** research is additive (*"2 + 2 = 4"*), where individuals maintain their disciplinary roles, and the outcome is the sum of the parts.  **Interdisciplinary** research is interactive (*"2 + 2 = 5"*) and involves the integration of disciplines, resulting in a synergy that is more than the sum of its parts.  **Transdisciplinary** research is holistic (*"2 + 2 = yellow"*), with results that transcend the traditional disciplinary boundary [@choi2006multidisciplinarity]. Currently, ecology is broadly disciplinary, and rarely transdisciplinary.  For the purposes of this paper we use the term interdisciplinary as a catch-all, and identify the "interdisciplinary" worker, an individual who is able to integrate multiple disciplines within their own research practice, rather than interdisciplinary teams.
 
 ![png_models](slide1.PNG)
 
-**Figure 1**. *Three models for interdisciplinary research & hiring within research departments. Blue lines represent supervision, red lines represent hiring.  We use squares to represent interdisciplinary researchers and circles to represent researchers who may be considered disciplinary.*
+**Figure 1**. *Three models for interdisciplinary research & hiring within research departments. Blue lines represent supervision by tenured researchers (upper row), red lines represent hiring of untenured researchers (postdoctoral & graduate; lower row).  We use circles to represent interdisciplinary researchers and squares to represent disciplinary researchers. Model (a) represents a siloed system where non-tenured researchers (lower row) carry out interdisciplinary research, but disciplinary researchers are strongly favored for tenure track positions.  Model (b) indicates some role for interdisciplinary researchers at the tenure track level, but this role is stable through time. Model (c) indicates that current interest in interdisciplinary training carries through to increased interdisciplinary hiring at the tenure track level.*
 
-It is possible to conceptualize multiple "preferred" models for interdisciplinary research at the institutional level. One model involves deeply disciplinary researchers collaborating on a project and hiring graduate or postdoctoral researchers who will act as the disciplinary bridges.  In this preferred model we might believe that tenure-track or tenured researchers would prefer colleagues who may appear more deeply disciplinary than interdisciplinary.  We represent this model in Fig 1a, where hiring is largely drawn from disciplinary (circles) researchers, and interdisciplinary collaboration is undertaken by interdisciplinary graduate students.  Here we might predict that hiring for tenure-track interdisciplinary researchers would remain low, and be relatively unchanged through time.
+It is possible to conceptualize multiple "preferred" models for interdisciplinary research at the institutional level. The siloed model (Fig. 1a) involves deeply disciplinary researchers collaborating on an interdisciplinary project and hiring graduate or postdoctoral researchers who will act as the disciplinary bridges.  In this model we might believe that tenure-track or tenured researchers would prefer colleagues who may appear more deeply disciplinary than interdisciplinary. Hiring in the siloed model is largely drawn from disciplinary (squares) researchers, and interdisciplinary collaboration is undertaken by interdisciplinary graduate students (circles).  Here, we might predict that hiring for tenure-track interdisciplinary researchers would remain low, and be relatively unchanged through time.
 
-The second model (Figure 1b) conceptualizes a balanced model, where embedded interdisciplinary researchers are replaced by interdisciplinary researchers, and elsewhere disciplinary researchers are hired. This model then predicts that hiring of tenure-track interdisciplinary researchers will remain low and stable through time.
+The balanced model (Fig. 1b) conceptualizes a system where embedded interdisciplinary researchers are replaced by interdisciplinary researchers at the tenure-track level, and elsewhere disciplinary researchers are hired. In this model, we might believe that tenure-track or tenured researchers prefer a mixture of interdisciplinary and disciplinary colleagues, but that hiring trends remain stable through time. This model then predicts that hiring of tenure-track interdisciplinary researchers should be roughly equivalent to hiring patterns at the tenure-track level overall.
 
-The third model suggests that recent funding initiatives via largely interdisciplinary programs (*e.g.*, NSF's Macrosystems Biology, EarthCube, Coupled Human Systems & others) would lead to the increased hiring of tenure-track interdisciplinary researchers through time.
+The growth model (Fig. 1c) suggests that recent funding initiatives via largely interdisciplinary programs (*e.g.*, NSF's Macrosystems Biology, EarthCube, Coupled Human Systems & others) would lead to the increased hiring of tenure-track interdisciplinary researchers, via new positions and via the replacement of some disciplinary researchers, through time.
 
-Ecolog-L is a listserve that essentially acts as a massive, unmoderated group blog (currently has XX,XXX subscribers, >20,000?) [run by David Inouye since the early 1990s](https://dynamicecology.wordpress.com/2013/02/22/whats-ecolog-l-for-and-how-can-we-make-it-better/) and hosted by the University of Maryland. It is [unofficially affiliated with the Ecological Society of America](http://esa.org/history/a-note-on-the-history-of-the-ecolog-listserv/), and is recognized as one of the largest aggregators for ecology grants, jobs, news, announcements, and discussion threads. Anyone can view posts, or register and contribute to posts for free. Jobs posted to Ecolog-L are almost certainly biased to jobs in the United States, but frequently include international listings as well. Here, we use posts from Ecolog-L from January 2000-January 2015 as representative of trends in graduate and postdoctoral vs. tenure-track job markets.
+ECOLOG-L (refered hereafter as Ecolog) is a LISTSERV® that acts as a massive, lightly moderated group blog (currently 20,500 members). It was started in 1992 by David Inouye, who still moderates it, and hosted by the University of Maryland. It is unofficially affiliated with the Ecological Society of America, and is recognized as one of the largest aggregators for ecology grants, jobs, news, announcements, and discussion threads. Anyone can view posts, or register and contribute to posts for free. Jobs posted to Ecolog are almost certainly biased to jobs in the United States, but frequently include international listings as well. We used posts from Ecolog from January 2000 - January 2015 as representative of trends in graduate and postdoctoral vs. tenure-track job markets.
 
-Here, we aim to test whether increased training at the graduate and postdoctoral levels are translating into increased hiring rates for tenure-track faculty with interdisciplinary backgrounds.  Using job postings from ECOLOG (https://listserv.umd.edu/archives/ecolog-l.html)[] we classify and assess the rates of change in job postings for graduate, postdoctoral and tenure track positions, both with and without interdisciplinary focus.  Using relative rates of posting
+Here, we aim to test whether increased training at the graduate and postdoctoral levels are translating into increased hiring rates for tenure-track faculty with interdisciplinary backgrounds.  Using job postings from Ecolog ([https://listserv.umd.edu/archives/ecolog-l.html]()) we classify and assess the rates of change in job postings for graduate, postdoctoral and tenure track positions, both with and without interdisciplinary focus.  Using relative rates of posting between job-type classes (tenure track, postdoctoral and graduate level) we aim to test whether differential rates of hiring have changed over time, and ultimately, use these rates of change to identify patterns in the academic job market and strategies for carrying out interdisciplinary work within the academy.
 
 ##Methods
-
-We used a web scraper written in R [@Team2014] to read messages from ECOLOG from the years 2000 - 2015. This program pulled the ECOLOG message, message date and message subject for each posting.  Messages from ECOLOG were used as the basis for the document corpus, which was then transformed into a term matrix using text analysis tools in the `tm` package for R [@feinerer2012tm;@meyer2008text]. Data pre-processing included the removal of excess whitespace, punctuation, and HTML tags and entities (all processing is preserved in the file `load_terms.R`). Because of the volume of messages, we removed all sparse terms, retaining only the top 1% by count.
-
-We classified a number of records by hand using a Shiny application (available publically [here](http://ec2-52-0-223-101.compute-1.amazonaws.com:3838/ESA_Shiny/)).  Messages were identified as academic job ads, non-academic job ads (generally), and non job postings. Academic job adds were classified into graduate, postdoctoral, and tenure track positions, and then also classified as interdisciplinary or not.  In addition, we provided the opportunity to classify salary type, but do not present this data here.  
-
-Using the surveyed messages (n=XXXX), we built a model using a random forest to classify messages as tenure track jobs, postdoctoral positions and graduate positions, and to test whether messages indicate interdisciplinarity (package *randomForest*; Liaw and Wiener 2002 [@LiawWiener2002RF]).  Based on the model constructed we then predict the class of the remaining messages to build a time series of job ads.  Since hand coding messages was an iterative process, we used the confusion matrix from the predictive models to weight the messages selected for display and classification.  Messages that were predicted to be interdisciplinary from the partial models were weighted most highly, as were messages with high rates of confusion for tenure track, postdoctoral or graduate positions.
-
-From the final model we then tracked the rate of change in the classified messages.  Modeling uses a binomial generalized additive model predicting the probability that a message is tenure-track, graduate or postdoctoral, and whether that message is interdisciplinary.
 
 ```{r load_things, echo=FALSE, message=FALSE, results='hide', warning =FALSE}
 library(ggplot2)
@@ -85,11 +83,25 @@ dtm.s99 <- as.matrix(dtm.s99)
 
 ```
 
+We used a web scraper written in R [@Team2014] to read messages from Ecolog from the years 2000 - 2015. This program pulled the Ecolog message, message date and message subject for each posting.  Messages from Ecolog were used as the basis for the document corpus, which was then transformed into a term matrix using text analysis tools in the `tm` package for R [@feinerer2012tm;@meyer2008text]. Data pre-processing included the removal of excess whitespace, punctuation, and HTML tags and entities (all processing is preserved in the file `load_terms.R`) using `tm_map` function from the `tm` package [@feinerer2012tm;@meyer2008text]. To eliminate pseudo-duplicates ("student" and "students") we used word stemming implemented as part of the `snowballC` package.  Because of the volume of messages, we removed all sparse terms, retaining only the top 1% by count.
+
+We classified `r nrow(all_runs)` records by hand using a Shiny [@chang2015shiny] application (available publically [here](http://ec2-52-0-223-101.compute-1.amazonaws.com:3838/ESA_Shiny/)).  Messages were identified as academic job ads, non-academic job ads (generally), and non-job postings. Academic job adds were classified into graduate, postdoctoral, and tenure track positions, and then also classified as interdisciplinary or not.  In addition, we provided the opportunity to classify salary type, but do not present this data here.  
+
+Using the surveyed messages, we built a model using a random forest to classify them as tenure track jobs, postdoctoral positions and graduate positions, and to test whether they indicate interdisciplinarity [package *randomForest*; @LiawWiener2002RF].  Based on the model constructed we then predict the class of the remaining messages to build a time series of job ads.  Because hand coding messages was an iterative process, we used the confusion matrix from the predictive models to weight Ecolog messages selected for display and classification in the Shiny app.  Messages that were predicted to be interdisciplinary from the partial models were weighted most highly, as were messages with high rates of confusion for tenure track, postdoctoral or graduate positions.
+
+Once all Ecolog messages were classified using the RF model, a Generalized Additive Model was applied [`gamm` in the package `mgcv`: @wood2004gamm].  A binomial model was constructed, using the employment class as a random effect, with the week of the year (1 - 52) modeled using a cyclic penalized cubic spline that varies by employment class.  This model then allowed us to examine the trends in each employment class, over the 15 years of data.  Because there is a gradual increase in the use of Ecolog, and because individual weeks and years are unlikely to be independent, we tested several correlational structures and found an `ARMA(1)` (using the year of the message) to provide the best modeling support.
+
 ##Results
 
-Once we pull the messages from ECOLOG we find that we obtain `r nrow(dtm.s99) - sum(rowSums(dtm.s99) == 0)` messages.  We clean the text in these messages to remove punctuation, extra whitespace, HTML tags, stop words and numbers using the `tm_map` function from the `tm` package [@feinerer2012tm;@meyer2008text].  This leaves us with a set of `r ncol(dtm.s99)` terms.
+Ecolog returns `r nrow(dtm.s99) - sum(rowSums(dtm.s99) == 0)` messages for the period from January 2000 to January 2015.  Cleaning & stemming the individual words in the messages leaves with a set of `r ncol(dtm.s99)` unique terms.
 
-The frequency of terms in the ECOLOG corpus follows a log distribution.  The most frequent terms ('will', n=`r colSums(dtm.s99)["will"]`; 'research', n=`r colSums(dtm.s99)["research"]`; university, n=`r colSums(dtm.s99)["university"]`; 'field', n=`r colSums(dtm.s99)["field"]`; and 'ecology', n=`r colSums(dtm.s99)["ecology"]`) have much higher frequencies than the mean ($u_{terms}$ = `r mean(colSums(dtm.s99))`).  Because the term matrix was constrained to the top 1% of all terms, the least common words in the term matrix ('enjoy', 'helpful' and 'speaking') still occur several hundreds of times (all n=`r sort(colSums(dtm.s99))[1]`).
+```{r simpleTermSort, echo=FALSE, message = FALSE, warning=FALSE}
+
+sort_term <- sort(colSums(dtm.s99), decreasing = TRUE)
+
+```
+
+The frequency of terms in the Ecolog corpus follows a log distribution.  The most frequent terms (`r names(sort_term)[1]`, n=`r sort_term[1]`; `r names(sort_term)[2]`, n=`r sort_term[2]`; `r names(sort_term)[3]`, n=`r sort_term[3]`; `r names(sort_term)[4]`, n=`r sort_term[4]`; and `r names(sort_term)[5]`, n=`r sort_term[5]`) have much higher frequencies than the mean ($u_{terms}$ = `r mean(colSums(dtm.s99))`).  Because the term matrix was constrained to the top 1% of all terms, the least common words in the term matrix still occur several hundreds of times (`r names(sort_term)[length(sort_term)]`, n=`r sort(colSums(dtm.s99))[1]`).
 
 **Table 1**. *Cross-over between terms in the top 95%ile of importance for the random forest model between classification models for Tenure-Track, Postdoctoral, and Graduate positions, as well as for Interdisciplinary positions.*
 
@@ -110,11 +122,13 @@ colnames(cross_over) <- colnames(imp_table)
 rownames(cross_over) <- colnames(imp_table)
 diag(cross_over) <- NA
 pander(cross_over[-1,-4], split.tables = Inf)
+
 ```
 
-Four independent random forest models were also constructed to enable us to assess term importance for each individual employment class and for interdisciplinary postings.  While the overall model (7 classes) has an out of bag error estimate of 18.4%, the higest error rates within any one class occur between classes and their "interdisciplinary" alternative.  This indicates higher rates of uncertainty within classes, and particularly, potential differences in the terms used for interdisciplinarity between job classes.
+Four independent random forest models were also constructed to enable us to assess term importance for each individual employment class and for interdisciplinary postings.  While the overall model (7 classes) has an out-of-bag error estimate of 18.4%, the highest error rates within any one class occur between classes and their "interdisciplinary" alternative.  This indicates higher rates of uncertainty within classes, and particularly, potential differences in the terms used for interdisciplinarity between job classes.
 
-**Table 2.**  
+**Table 2.**  *Confusion matrix for the complete random forest model. The confusion matrix shows the hand classified coding in rows and the model classifications in the columns. For example, of the 64 postings classified as "interdisciplinary tenure track" (TT_Int), the random forest model classified one message as a graduate student position, one as an interdisciplinary postdoctoral position (PD_Int) and 13 as non-interdisciplinary Tenure track positions. The Class Error is the proportion of incorrectly classified samples for any one class.*
+
 ```{r echo=FALSE, results='as-is', message=FALSE, warning=FALSE}
 
 pander(full.rf$confusion, round = 2, split.tables = Inf)
@@ -123,7 +137,7 @@ pander(full.rf$confusion, round = 2, split.tables = Inf)
 
 The random forest model provides an importance table, indicating the utility of a term in classifying individual messages into the various classes.  The importance value represents the mean decrease in the Gini index across trees when the particular variable is used as a classifier. The tables themselves are very long, but rank of individual terms can provide some insight into the processes underlying the hiring trends in ecology.  Tenure-track and postdoctoral positions show higher cross-over of high-importance terms than do tenure-track and graduate positions (or postdoctoral and graduate positions).  Both graduate and postdoctoral positions show much higher cross-over with interdisciplinary terms than do terms of importance for tenure-track postings.
 
-**Table 2**. *Importance terms for the classification of Tenure Track, Postdoctoral, and Graduate student positions.  Bolded terms represent terms that are unique within the top 99%ile of terms.  Many of the top key terms for positions relate specifically to those positions (tenure track, graduate). Interestingly, among "position" terms, postdoctoral is non-unique due to its high importance within the "interdisciplinary" classification model.*
+**Table 3**. *Importance terms for the classification of Tenure Track, Postdoctoral, and Graduate student positions.  Terms are sorted in order of relative importance from top (most important) to bottom (lower importance). Bolded terms represent terms that are unique within the top 99%ile of terms for the class. Many of the top key terms for positions relate specifically to those positions (tenure track, graduate).*
 
 ```{r importance_table, echo=FALSE, warning = FALSE, message=FALSE, result = 'as-is'}
 
@@ -139,11 +153,6 @@ imp_table <- apply(imp_table, 2, function(x){x[!x %in% unlist(imp_table)[duplica
 
 pander(imp_table, split.tables = Inf)
 
-```
-
-The random forest model to explicitly identify tenure-track positions indicates that terms of high importance include "tenuretrack" (indicating the removal of a hyphen), "assistant", "professor" and "undergraduate" (Table 2). For postdoctoral positions, the model identifies "postdoctoral", "position", and "research" as most important.  The key term in this case is "interdisciplinary".  We're really looking at interdisciplinary jobs here, so it's no surprise that terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a much higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
-
-```{r, echo=FALSE, warning = FALSE, message=FALSE}
 
 rep.row<-function(x,n){
    matrix(rep(x,each=n),nrow=n)
@@ -152,14 +161,30 @@ rep.row<-function(x,n){
 # This is where we pull out the date.  For each list in all.messages (representing a
 # unique week), provide the numeric week value.
 
-weeks <- do.call(rbind.data.frame, lapply(1:length(all.messages),function(x)rep.row(myw2[x,],length(all.messages[[x]]))))
+weeks <- do.call(rbind.data.frame,
+                 sapply(1:length(all.messages),
+                        function(x)(rep.row(myw2[x,],length(all.messages[[x]])))))
 
-all_preds <- data.frame(date = unlist(weeks[,3]) + (unlist(weeks[,2]) + unlist(weeks[,1])/4)/12,
+weeks <- apply(weeks, 2, as.numeric)
+
+```
+
+The random forest model to identify explicitly tenure-track positions indicates that terms of high importance include "tenuretrack" (indicating the removal of a hyphen), "assistant", "professor" and "undergraduate" (Table 2). For postdoctoral positions, the model identifies "postdoctoral", "position", and "university" as most important.  In the case of "interdisciplinary" terms, and because we're limiting classification to interdisciplinary jobs, terms like "position", "project", "applications" show up, but the importance rank of "postdoctoral" (rank = 5) is much higher than the importance of "tenuretrack" (rank = 215) or "professor" (rank = 215), indicating a higher incidence of interdisciplinary advertisments for graduate and postdoctoral positions than for professors.
+
+Job postings on Ecolog have increased along with the increase in posting volume since 2000, however the increase in total postings as a proportion of job postings for graduate positions is much stronger than for any other job position (**Figure 2**).
+
+```{r textbox, echo=FALSE, warning=FALSE, message=FALSE, width = 6, height = 4}
+
+all_preds <- data.frame(date = weeks[,3] + weeks[,2]/12,
                         prediction = predict_al,
                         count = 1)
 
 all_cast <- dcast(all_preds, date ~ prediction, value.var = 'count',
                   fun.aggregate = sum)
+
+#  Are we looking at the total number of messages, or the total number of jobs?
+total.job <- rowSums(all_cast[,-c(1, 4)])
+total.msg <- rowSums(all_cast[,-c(1)])
 
 #all_cast[,2:8] <- all_cast[,2:8] / rowSums(all_cast[,2:8])
             
@@ -170,32 +195,105 @@ all_melt$int <- regexpr("Int", all_melt$variable)>0
 
 all_melt$variable <- substr(all_melt$variable, 1,2)
 
-ggplot(all_melt, aes(x = date, y = value, color = variable)) + 
-  geom_smooth(span = 0.07, 
-              aes(linetype=int)) +
-  theme_bw() + facet_wrap(~variable) +
-  coord_cartesian(xlim=c(2000, 2015), expand=0)
-  
+all_melt$fail_job <- total.job[match(all_melt$date, all_cast$date)] - all_melt$value
+all_melt$fail_msg <- total.msg[match(all_melt$date, all_cast$date)] - all_melt$value
+
+
+source('R/detrending_model.R')
+
+all_melt$class <- factor(all_melt$variable, labels = c("Graduate", 'Postdoctoral', 'Tenure Track'))
+
+saveRDS(all_melt, 'data/all_melt.RDS')
+
+ggplot(all_melt, aes(x = date, y = I(value/(fail_msg+value)))) + 
+  geom_point(aes(color = int), alpha = 0.5) +
+  geom_smooth(span = 0.08, 
+              aes(linetype=int),
+              se=FALSE, size = 2) +
+  theme_bw() + facet_wrap(~class) +
+  scale_linetype_discrete(guide = guide_legend(title = "Interdisciplinary")) +
+  scale_color_brewer(type='qual', 
+                     guide  = guide_legend(title = "Position")) +
+  scale_x_continuous(breaks = seq(2000, 2010, by = 5)) +
+  scale_y_continuous(breaks = seq(0.05, .25, by = .05)) +
+  coord_cartesian(xlim=c(2000, 2015), ylim = c(0, 0.25), expand=0) +
+  xlab('Year') +
+  ylab('Proportion of Messages') +
+  theme(axis.text = element_text(family='serif', size = 16),
+        axis.title = element_text(family='serif', size = 18, face = 'bold'),
+        #legend.text = element_text(family='serif', size = 14),
+        strip.text =  element_text(family='serif', size = 16, face = 'bold'))
+
 ```
 
-##Discussion
+**Figure 2.** *Job postings as a proportion of all postings on ECOLOG. Postings for graduate student positions increase strongly from 2000 - 2015 as do postdoctoral position postings.  Tenure track postings appear to remain relatively stable through time.  Interdisciplinary postings remain low through time and appear to increase at a rate equal to, or lower than the disciplinary postings.*
 
-Main points to discuss:
-* can see that peak timing for job advertisement differ tenure-track (earlier) vs. graduate/postdoc (later).
-* declining number of opportunities at each academic career stage (more grad positions than postdoc than t-t).
+Seasonal trends suggest differences in timing and intensity for the different job classes (Figure 3).  In all cases the amplitude of the disciplinary curve is much higher than the amplitude of the interdisciplinary curve, although this may be, in part, a function of the total number of postings.  The timing of peak posting and the lowest rates of posting also varies by class.  The lowest proportion of postings for graduate positions occurs at the end of July (as with Postdoctoral positions), while the lowest volume for Tenure Track positions occurs a month earlier in June.  The peak time of tenure track posting occurs in mid-November (similar to Postdoctoral postings), while the graduate posting peak appears to be broader, with a peak in late February.
 
-*increasing # of postings per year, esp. for graduate/postdoc jobs (perhaps what we really want to plot is proportion of interdisciplinary jobs?)
-* increase in postdoc interdisc. jobs, esp 2005-2010, then level off? (similar pattern for graduate work?)
-* relatively flat trend for faculty t-t jobs (ony very slight increase?)
+![weeklychange](figures/week_plot.tiff)
 
-* are interdiscp. researchers seeking non t-t careers (e.g. government, non profit?)
-* does interdisp. work have particular benefits for non ac vs. ac careers? (can't really measure in our survey because we didn't finely divide up non-ac jobs, can only speculate)
+**Figure 3**. *The seasonal trend in position posting shows differences between job classes, and between interdisciplinary and disciplinary postings. Panels represent job types and line coloring indicates whether a position in interdisciplinary (purple) or disciplinary (green).  Positive values suggest higher than average posting proportions.  The model is derived using a generalized additive mixed model, with job class as a random effect and a one year ARMA lag.*
 
-* do department t-t hiring trends follow their ads - e.g. just because they don't use the word interdisciplinary, are they biased for/against candidates with interdisciplinary backgrounds?
-* important for interdiscp t-t candidates to still be able to have "story" they can tell - important not to appear unfocused or too broad, like to be categorized.
+All three types of postings appear somewhat bimodal, whereas the major peak for Tenure Track and Postdoctoral jobs occurs in November, the secondary peak is in the early spring, coincident with the Graduate position peak.
+
+For interdisciplinary positions the amplitude of the seasonal trend is much lower and there appears to be a shift from bimodal to unimodal posting seasonality.
+
+![annualchange](figures/ann_plot.tiff)
+
+**Figure 4** *Annual trend for Ecolog job postings.  Overall there is a trend of increasing total postings for each job class, with interdisciplinary postings increasing at a lower rate for graduate and postdoctoral students than for tenure track positions, which have been subject to much greater fluctuations.*
+
+Year over year changes show considerable fluctuations.  In particular, a significant drop for disciplinary Graduate and Tenure Track postion posting volume (and for interdisciplinary Postdoc postings) occurs in 2004, while the same trend appears absent from the disciplinary postdoc postings and from the interdisciplinary Tenure Track and Graduate postings.
+
+**Some of this may be due to a limitation of the modeling we apply currently.**  Andrea Dawson is taking a look at the model & will likely contribute a better model that should decompose the trends and take into account the temporal autocorrelation I can't presently get rid of.
+
+## Discussion
+
+### Main points to discuss:
+
+**First two to three paragraphs.**
+
+* refs on ac hiring trends generally (e.g. proportion of ecology grads/postdocs that get t-t jobs) & increasing importance of interdiscip.
+  * Our RESULTS: declining number of opportunities at each academic career stage (more grad positions than postdoc than t-t). (as a proportion)
+  * Differences in trends for interdiscip vs traditional
+  * how does this match our models?
+  
+**Two paragraphs (caveats and considerations)**
+
+Judging the intent of job advertisments and understanding the distinction between familiarity with a tool, and deeper engagement with a discipline is a critical challenge in classifying the opportunities for interdisciplinary researchers. Many tools commonly used within ecology are drawn from advances within other disciplines, where the "tool" is studied as a discipline in and of itself.  The conflict between tool and discipline has been elucidated for geochronology, used extensively as a tool within paleoecology and paleobiology, but a discipline in its own right [@harrison2015geochronology]. Within ecology it is often possible to make a clear distinction: A job that requires a landscape ecologist with GIS experience is likely not seeking a cross-disciplinary GIScientist, since GIS is largely used as a tool within ecology. Job ads requiring familiarity with R are also generally not asking for cross-disciplinary researchers, however the extent of statistical knowledge (for example), or intent of the position may make this distinction less clear.
+
+  This is further complicated by within-discipline splitting.  Is a paleoecologist with landscape ecology experience cross-disciplinary, what about paleoecology and microbial ecology or microbiology?  Analysis of citation patterns that make use of defined conventional disciplines show that ecology (as a specialty within biology) cites outside its discipline (biology) only 37% of the time, somewhat less than botany (42%) and zoology (48%), and has historically been one of the most disciplinary of the biological sciences by this measure since the 1950s [@van2015interdisciplinary].
+  
+  The breadth of ecological sub-disciplines is overwhelming (community ecology, chemical ecology, microbial ecology, invasion ecology, animal communication, biogeography, landscape ecology, macroecology, spatial ecology, terrestrial ecology, behavioral ecology, paleoecology), and new sub-disciplines are being proposed continually [*e.g.*, @heffernan2014macrosystems].  A similar challenge to identifying interdisciplinarity is understanding whether individuals see the philosophical differences between subdisciplines as large enough to require realignment of views to tackle complex problems.  The perception of a divide between sub-disciplines likely varies between indviduals and between sub-disciplines, but the problem is clear enough within ecology that disagreements over semantics have arisen a number of times, and a standardized nomenclature within ecology has been suggested [@herrando2014ecology].  All this means that many people perceive of the possibility of an interdisciplinarity *within* ecology, but we argue here that whether or not semantic differences exist within ecological subdisciplines, they are dwarfed by the differences that result from reaching outside the discipline, to human geographers, psychologists and geologists, few of whom will have had the foundational training and background that many of us as ecologists share.
+    
+  * do department t-t hiring trends follow their ads - e.g. just because they don't use the word interdisciplinary, are they biased for/against candidates with interdisciplinary backgrounds?
+  * Most job ads at the tt level have been "written by committee" and so there is evidence of direction & intention in the ads.
+  * interdisciplinarity in the grad & postdoc ads may be overstated.
+
+**Two paragraphs**
+
+  - **David, could you take the lead on this possibly?**
+  - broader discussion about Ecolog
+  * increasing # of postings per year, esp. for graduate/postdoc jobs (perhaps what we really want to plot is proportion of interdisciplinary jobs?)
+  * increase in postdoc interdisc. jobs, esp 2005-2010, then level off? (similar pattern for graduate work?)
+  * relatively flat trend for faculty t-t jobs (ony very slight increase?)
+  * also the impact of economic issues (jobs during recession)
+
+**One paragraph**
+
 * refs that give suggestions or "rules of thumb" for interdisp. job candidates?
-* refs on ac hiring trends generally (e.g. proportion of ecology grads/postdocs that get t-t jobs)
+  * important for interdiscp t-t candidates to still be able to have "story" they can tell - important not to appear unfocused or too broad, like to be categorized.
+  * does interdisp. work have particular benefits for non ac vs. ac careers? (can't really measure in our survey because we didn't finely divide up non-ac jobs, can only speculate)
+  
+**One paragraph**
+This dataset provides opportunities beyon understanding the state of the interdisciplinary job market.  Recent questions have been raised about the extent of seasonal & unpaid internships [@fournier2015volunteer] and further textual analysis of this dataset would provide opportunities to study this.  Ecolog is more than just a job board though.  Conversations about evolutionary theory, field work, sexism in the academy and more have been carried out throughout its existence.  We provide this dataset and our analytical code as a 
 
+**Final Paragraph**
 
+* Summary of findings
+
+##Acknowledgements
+SJG developed the idea behind this paper, contributed to the hand classification of postings, the bulk of the code and to writing and editing of this paper. SS helped with the framing, hand classification and writing of the paper. AD assisted with the framing, writing and statistical analysis (to do). DI contributed to the framing of the paper, assisted in writing and editing the draft paper.
+
+This material is based upon work carried out by the PalEON Project (paleonproject.org) with support from the National Science Foundation MacroSystems Biology program under grant no. DEB-1241868. SJG would like to acknowledge NG, CG & AG in providing support for this analysis. **Add anything here**
 
 ##References

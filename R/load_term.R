@@ -1,6 +1,7 @@
 #  This file is to load and parse all the ecolog messages:
 
 library(tm)
+library(SnowballC)
 
 if('all.messages.RDS' %in% list.files('data')){
   all.messages <- readRDS(file = 'data/all.messages.RDS') 
@@ -43,6 +44,7 @@ if('term_frame.RDS' %in% list.files('data')){
   tm.corp <- tm_map(tm.corp, 'stripWhitespace')
   tm.corp <- tm_map(tm.corp, content_transformer(tolower))
   tm.corp <- tm_map(tm.corp, removeWords, stopwords("english"))
+  tm.corp <- tm_map(tm.corp, stemDocument)
   
   #  Note, I tried stemming, but it does a pretty rotten job on the data.
   

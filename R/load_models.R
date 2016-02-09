@@ -24,6 +24,10 @@ if(any(!curr_RDS %in% old_RDS)){
   
   all_runs <- readRDS(file = 'data/responses.RDS')
   
+  #  Clean out messages that were skipped (had no classification effort)
+  all_runs <- all_runs[rowSums(all_runs[,-1]) > 0 & !(rowSums(all_runs[,-1]) > 0 & all_runs$uncer),]
+  
+  #  In these groups there is potential for overlap, but we assign a class:
   tenure_track <- na.omit(data.frame(tt.job = factor(all_runs$jt_tt==1),
                                      dtm.s99[all_runs$msg,]>0))
   
@@ -37,33 +41,38 @@ if(any(!curr_RDS %in% old_RDS)){
                                      dtm.s99[all_runs$msg,]>0))
   
   full_class <- rep(NA, nrow(all_runs))
-  full_class[all_runs$jt_tt & !(all_runs$jt_pd & all_runs$jt_gp &all_runs$inter)] <- "TT"
+  
+  ## Classifying the messages into text strings.
+  full_class[all_runs$jt_tt & !(all_runs$jt_pd & all_runs$jt_gp & all_runs$inter)] <- "TT"
   full_class[all_runs$jt_tt & all_runs$inter & !(all_runs$jt_pd & all_runs$jt_gp)] <- "TT_Int"
   
-  full_class[all_runs$jt_pd & !(all_runs$jt_tt & all_runs$jt_gp &all_runs$inter)] <- "PD"
+  full_class[all_runs$jt_pd & !(all_runs$jt_tt & all_runs$jt_gp & all_runs$inter)] <- "PD"
   full_class[all_runs$jt_pd & all_runs$inter & !(all_runs$jt_tt & all_runs$jt_gp)] <- "PD_Int"
   
-  full_class[all_runs$jt_gp & !(all_runs$jt_tt & all_runs$jt_pd &all_runs$inter)] <- "GR"
+  full_class[all_runs$jt_gp & !(all_runs$jt_tt & all_runs$jt_pd & all_runs$inter)] <- "GR"
   full_class[all_runs$jt_gp & all_runs$inter & !(all_runs$jt_tt & all_runs$jt_pd)] <- "GR_Int"
   
-  full_class[is.na(full_class)] <- "Other"
   
-  full_df      <- na.omit(data.frame(fm = factor(full_class),
+  full_class[!(all_runs$jt_tt | all_runs$jt_pd | all_runs$jt_gp) & 
+               (all_runs$jt_ad | all_runs$jt_se | all_runs$jt_in)] <- "Other job"
+  
+  full_class[all_runs$jt_na | is.na(full_class)] <- "Non-job"
+  
+  full_df      <- na.omit(data.frame(fm = full_class,
                                      dtm.s99[all_runs$msg,]>0))
   
   dtm.pred <- data.frame(dtm.s99>0)
-  
-  colnames(dtm.s99)[432] <- "driver.s"
-  colnames(dtm.s99)[472] <- "else."
-  colnames(dtm.s99)[627] <- "function."
-  colnames(dtm.s99)[1017] <- "next."
   
   #  Models are very slow!
   is.job.rf <- randomForest(tt.job ~ ., data = tenure_track, sampsize = c(30, 30))
   is.pdc.rf <- randomForest(postdo ~ ., data = postdoc, sampsize = c(30, 30))
   is.gra.rf <- randomForest(gradst ~ ., data = grad_student, sampsize = c(30, 30))
   is.int.rf <- randomForest(interd ~ ., data = interdiscip, sampsize = c(30, 30))
-  full.rf   <- randomForest(fm     ~ ., data = full_df, sampsize = rep(20, 7))
+  
+  # testing_model <- tuneRF(full_df[,-1], full_df[,1], stepFactor = 1.5)
+  full.rf   <- randomForest(fm     ~ ., data = full_df, 
+                            sampsize = rep(20,length(unique(full_class))), # balance the classes.
+                            mtry = 127) # mtry comes from tuneRF.
   
   predict_tt <- predict(is.job.rf, dtm.pred)
   predict_pd <- predict(is.pdc.rf, dtm.pred)
@@ -108,6 +117,9 @@ if(any(!curr_RDS %in% old_RDS)){
   
     
 } else{
+  
+  
+  all_runs <- readRDS(file = 'data/responses.RDS')
   
   is.job.rf <- readRDS(file = 'data/is_job.RDS')
   is.gra.rf <- readRDS(file = 'data/is_era.RDS')
