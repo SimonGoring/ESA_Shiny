@@ -1,14 +1,14 @@
 ---
 title: "Interdiscplinary Ecolog"
 author: "Simon Goring and Sarah Supp"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: '`r format(Sys.time(), ''%d %B, %Y'')`'
 output:
-  word_document:
+  html_document: default
   md_document:
     variant: markdown_github
   pdf_document:
     pandoc_args: -V geometry:vmargin=1in -V geometry:hmargin=1in
-  html_document: default
+  word_document: null
 csl: ecology.csl
 pandoc_args: -H margins.sty
 bibliography: ecolog_paper.bib
@@ -252,10 +252,23 @@ Year over year changes show considerable fluctuations.  In particular, a signifi
 
 **First two to three paragraphs.**
 
-* refs on ac hiring trends generally (e.g. proportion of ecology grads/postdocs that get t-t jobs) & increasing importance of interdiscip.
-  * Our RESULTS: declining number of opportunities at each academic career stage (more grad positions than postdoc than t-t). (as a proportion)
+  * Brief summary of our RESULTS: declining number of opportunities at each academic career stage (more grad positions than postdoc than t-t). (as a proportion)
   * Differences in trends for interdiscip vs traditional
   * how does this match our models?
+  
+  * refs on ac hiring trends generally (e.g. proportion of ecology grads/postdocs that get t-t jobs) & increasing importance of interdiscip.
+  * too many PhDs, not enough jobs. PhDs are being absorbed into postdoc positions (BLS 2015)
+  * average length of postdoc is increasing across STEM disciplines (Phys.org 2015, Syst Res Behav Sci 2014, Laudel & Glaser 2008)
+  * postdocs dissatisfied with academic job market, 5.5% loss 2010-2013 in postdoc population (Science 2015)
+  * job insecurity and lack of career structure (and adequate mentoring) are major concerns of postdocs (Scaffidi & Berman 2009, Phys.org 2015)
+  * Estimated to be 60k-100k postdocs in the USA (but hard to measure; Science 2015)
+  * Taxicab queue model for academic labor market (BLS 2015)
+  * Life sciences has average job growth of 1.5% per year (Syst Res Behav Sci 2014)
+  * Increased duration of faculty careers (no fixed retirement age) also limits job growth and turnover (Syst Res Behav Sci 2014)
+  * Early Career Researcher success is constrained by funding and time (Laudel & Glaser 2008)
+  * NSF Science and Engineering Indicators 2012 - has stats on labor market & job growth (http://www.nsf.gov/statistics/seind12/)
+  * Hugely variable among postdocs in access to adequate training/mentoring and desire to get an academic job (https://www.repository.cam.ac.uk/bitstream/handle/1810/224920/2789.pdf?sequence=1 2009)
+  * Academic STEM jobs become less attractive as move through grad programs and postdocs (Science 2012, prep for academic career 2009, Science 2015, Slate 2014) and mentoring in non-ac careers could be greatly improved (Scaffidi & Berman 2011)
   
 **Two paragraphs (caveats and considerations)**
 
