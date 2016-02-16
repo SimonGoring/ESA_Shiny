@@ -251,11 +251,10 @@ Year over year changes show considerable fluctuations.  In particular, a signifi
 ### Main points to discuss:
 
 **First two to three paragraphs.**
+Our results show differences across academic career stages (graduate, postdoctoral, and tenure-track) in the timing of job advertisements (Figure 3) and in the proportion of interdisciplinary-focused positions being offered (Figure 4). Unsurprisingly, the total number of hiring opportunities declines at each academic career stage; in other words, there are more graduate positons than postdoctoral positions, and more postdoctoral positions than tenure-track faculty. This is especially true for those seeking interdisciplinary career options, as the proportion of tenure-track positions explicitly advertising for interdisciplinary candidates is far less than the proportion of interdisciplinary "training" positions (e.g. at the graduate and postdoctoral level) (quantitative measure here). This discrepancy between opportunities for academic interdisciplinary training vs. academic tenure-track positions suggests that the balanced or siloed model still represents most academic hiring (versus the growth model) and early career researchers may need to strategize carefully about how they market their interdisciplinary training in order to be competitive in the tenure-track job market (I know this sentence is long and terrible). (summarize results for the discussion...)
 
-  * Brief summary of our RESULTS: declining number of opportunities at each academic career stage (more grad positions than postdoc than t-t). (as a proportion)
-  * Differences in trends for interdiscip vs traditional
-  * how does this match our models?
-  
+In STEM fields generally, there has been a recognition of an academic career bottleneck, where there are many graduate training positions, but not enough jobs for these students to move into after graduation (BLS 2015). In recent years, increased duration of faculty careers (Syst Res Behav Sci 2014) and limited access to funding, means that the glut of PhDs have been absorbed into postdoctoral positions (BLS 2015), lengthening the amount of time that an early career researcher stays in a postdoctoral position across STEM disciplines (Phys.org 2015, Syst Res Behav Sci 2014, Laudel and Glaser 2008). By some estimates, ther are currently 60,000 - 100,000 postdoctoral researchers in the United States alone (Science 2015), although an exact measure is unavailable since postdoctoral researchers themselves are difficult to define (e.g. academic, govt, temporary jobs, contract jobs, soft money - I'm sure there's a ref for this somewehre). Researchers who spend longer in postdoctoral positions, often moving several times during this career phase, cite job insecurity, lack of career structure, and inadequate mentoring as major concerns to staying active in STEM research (Scaffidi and Berman 2009, Ackerlind 2009, Phys.org 2015). In addition, overall dissatisfaction with the academic job market may have led to a 5.5% loss in the (united states?) STEM postdoctoral population from 2010-2013 (Science 2015).
+
   * refs on ac hiring trends generally (e.g. proportion of ecology grads/postdocs that get t-t jobs) & increasing importance of interdiscip.
   * too many PhDs, not enough jobs. PhDs are being absorbed into postdoc positions (BLS 2015)
   * average length of postdoc is increasing across STEM disciplines (Phys.org 2015, Syst Res Behav Sci 2014, Laudel & Glaser 2008)
@@ -267,8 +266,13 @@ Year over year changes show considerable fluctuations.  In particular, a signifi
   * Increased duration of faculty careers (no fixed retirement age) also limits job growth and turnover (Syst Res Behav Sci 2014)
   * Early Career Researcher success is constrained by funding and time (Laudel & Glaser 2008)
   * NSF Science and Engineering Indicators 2012 - has stats on labor market & job growth (http://www.nsf.gov/statistics/seind12/)
-  * Hugely variable among postdocs in access to adequate training/mentoring and desire to get an academic job (https://www.repository.cam.ac.uk/bitstream/handle/1810/224920/2789.pdf?sequence=1 2009)
+  * Hugely variable among postdocs in access to adequate training/mentoring and desire to get an academic job (https://www.repository.cam.ac.uk/bitstream/handle/1810/224920/2789.pdf?sequence=1 2009 - Ackerlind 2009)
   * Academic STEM jobs become less attractive as move through grad programs and postdocs (Science 2012, prep for academic career 2009, Science 2015, Slate 2014) and mentoring in non-ac careers could be greatly improved (Scaffidi & Berman 2011)
+
+Despite an increased emphasis on interdisciplinary training (refs), employers in STEM fields still often prefer to hire scientists who are established within a specific disciplinary silo (). This doesn't mean that interdisciplinary trainees necessarily are less likely to ultimately be hired, but it does mean that often, special care must be taken to ensure that the job candidate's CV reflects deep knowledge/establishment within a discipline (). 
+
+
+
 
   * ref on guidelines for interdisciplinary academic hiring (mainly for early career and faculty research) - http://www.ncseonline.org/sites/default/files/Intedisciplinary%20Hiring%20Report_FINAL.pdf
   * "employers often prefer to hire scientists who have stayed in established research disciplines"... [interdisciplinary training is] "very rarely an advantage when looking for a faculty position". (although interdisciplinary area that have become their own fields prove exception - e.g. systems biology). http://www.nature.com/naturejobs/science/articles/10.1038/nj7358-115a
