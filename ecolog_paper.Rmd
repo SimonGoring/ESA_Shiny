@@ -151,6 +151,7 @@ rownames(imp_table) <- NULL
 
 imp_table <- apply(imp_table, 2, function(x){x[!x %in% unlist(imp_table)[duplicated(unlist(imp_table))]] <- paste0('**',x[!x %in% unlist(imp_table)[duplicated(unlist(imp_table))]],'**');x})
 
+##  Note - add the most common ending to the stemmed words.
 pander(imp_table, split.tables = Inf)
 
 

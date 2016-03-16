@@ -74,6 +74,7 @@ for(i in 1:10){
   test.rf   <- randomForest(fm     ~ ., data = test_df, 
                             sampsize = rep(freq,length(unique(test_df[,1]))), # balance the classes.
                             mtry = 127) # mtry comes from tuneRF.
+  
   conf_drop[i] <- sum((test.rf$confusion[,9] * rowSums(test.rf$confusion[,-9])))/sum(test.rf$confusion[,-9])
 }
 
