@@ -25,7 +25,13 @@ shinyUI(pageWithSidebar(
                                 choices = list("Something I'm not sure of" = 1))
              )),
               
-    actionButton(inputId='click', label='Confirm')),
+    selectInput('selectOrder', label = "Priority",
+                choices = c('default', 'postdoc', 
+                            'interdisciplinary','tenure track',
+                            'grad position', 'unpaid'),
+                selected = 'default',
+                width = '50%'),
+  actionButton(inputId = 'click', label = 'Confirm')),
     
   mainPanel(
     htmlOutput('table')
