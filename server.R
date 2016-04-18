@@ -7,8 +7,8 @@ not_jobs     <- readRDS('data/not_jobs.RDS')
 pred_good    <- readRDS('data/pred_good.RDS')
 
 #  Extract the messages and subject headings:
-messages <- unlist(lapply(all.messages, function(x)lapply(x, function(x)ifelse(length(x)>1,x[[2]],NA))))
-subjects <- unlist(lapply(all.messages, function(x)lapply(x, function(x)ifelse(length(x)>1,x[[1]],NA))))
+messages <- unlist(lapply(all.messages, function(x)lapply(x, function(x)ifelse(length(x) > 1,x[[2]],NA))))
+subjects <- unlist(lapply(all.messages, function(x)lapply(x, function(x)ifelse(length(x) > 1,x[[1]],NA))))
 
 messages <- c(messages, readChar('data/initialmessage.txt', file.info('data/initialmessage.txt')$size))
 subjects <- c(subjects, '')
@@ -30,7 +30,7 @@ change.words <- function(x){
 }
 
 
-shinyServer(function(input, output, session) {
+shinyServer (function(input, output, session) {
 
   #  The 'flag' starts out as 'x'
   counter <<- 0
@@ -45,21 +45,29 @@ shinyServer(function(input, output, session) {
         return(length(messages))
       }
       
-      msgs <- !(1:length(subjects))%in%(not_jobs+1)
+      msgs <- !(1:length(subjects)) %in% (not_jobs + 1)
       samples <- (1:length(subjects))[msgs]
-      tester <- sample(samples, 1, 
-                       prob = c(1,pred_good)[msgs]^3)
       
-      while(is.na(messages[tester])){
+      if (input$selectOrder %in% 'default' )           { sel_col = 1 }
+      if (input$selectOrder %in% 'postdoc' )           { sel_col = 2 }
+      if (input$selectOrder %in% 'interdisciplinary' ) { sel_col = 3 }
+      if (input$selectOrder %in% 'tenure track' )      { sel_col = 4 }
+      if (input$selectOrder %in% 'grad position' )     { sel_col = 5 }
+      if (input$selectOrder %in%  'unpaid' )           { sel_col = 6 }
+      
+      tester <- sample(samples, 1, 
+                       prob = c(1,pred_good[,sel_col])[msgs])
+      
+      while (is.na(messages[tester])) {
         tester <- sample(samples, 1)  
       }
       
-      return(tester)})
+      return(tester) } )
     
     })
   
   output$table <- renderUI({
-    if (input$click == 0){
+    if (input$click == 0) {
       tail(evals)
     }
     isolate({  
@@ -70,8 +78,8 @@ shinyServer(function(input, output, session) {
       new$flag <- flag
 
       flag <<- 'a'
-      evals[[length(evals)+1]] <<- new
-      saveRDS(evals, file=paste0('data/evals',randVal, dateTime,'.RDS'))
+      evals[[length(evals) + 1]] <<- new
+      saveRDS(evals, file = paste0('data/evals',randVal, dateTime,'.RDS'))
 
       updateCheckboxGroupInput(session, "jobType",
                          choices = list("Job Ad" = 1, "Grad Position" = 2,
