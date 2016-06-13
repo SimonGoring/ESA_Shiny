@@ -53,11 +53,4 @@ ggplot(all_dat) +
 ```
 **Figure 1**. Posting volume for job adds in each class.
 
-
-You can also embed plots, for example:
-
-```{r, echo=FALSE}
-plot(cars)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+  
