@@ -1,7 +1,7 @@
 ---
 title: "Interdiscplinary Ecolog"
 author: "Simon Goring and Sarah Supp"
-date: '`r format(Sys.time(), ''%d %B, %Y'')`'
+date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
   html_document: default
   md_document:
@@ -51,7 +51,7 @@ Perceptions of risk for researchers engaged in interdisciplinary research are re
 
 While ecology is often perceived as being highly interdisciplinary, publications patterns do not necessarily reflect this belief [@van2015interdisciplinary; @romolini2013next].  Regardless, it is important to clarify what is meant by interdisciplinarity in the context of this paper, and in the broader discussion.  Multiple terms are used to describe disciplinarity, primarily "multidisciplinary", "interdisciplinary" and "transdisciplinary".  Choi and Pak [-@choi2006multidisciplinarity] provide a unique framing for the three models: **Multidisciplinary** research is additive (*"2 + 2 = 4"*), where individuals maintain their disciplinary roles, and the outcome is the sum of the parts.  **Interdisciplinary** research is interactive (*"2 + 2 = 5"*) and involves the integration of disciplines, resulting in a synergy that is more than the sum of its parts.  **Transdisciplinary** research is holistic (*"2 + 2 = yellow"*), with results that transcend the traditional disciplinary boundary [@choi2006multidisciplinarity]. Currently, ecology is broadly disciplinary, and rarely transdisciplinary.  For the purposes of this paper we use the term interdisciplinary as a catch-all, and identify the "interdisciplinary" worker, an individual who is able to integrate multiple disciplines within their own research practice, rather than interdisciplinary teams.
 
-![png_models](slide1.PNG)
+![png_models](figures/slide1.PNG)
 
 **Figure 1**. *Three models for interdisciplinary research & hiring within research departments. Blue lines represent supervision by tenured researchers (upper row), red lines represent hiring of untenured researchers (postdoctoral & graduate; lower row).  We use circles to represent interdisciplinary researchers and squares to represent disciplinary researchers. Model (a) represents a siloed system where non-tenured researchers (lower row) carry out interdisciplinary research, but disciplinary researchers are strongly favored for tenure track positions.  Model (b) indicates some role for interdisciplinary researchers at the tenure track level, but this role is stable through time. Model (c) indicates that current interest in interdisciplinary training carries through to increased interdisciplinary hiring at the tenure track level.*
 
@@ -85,7 +85,7 @@ dtm.s99 <- as.matrix(dtm.s99)
 
 We used a web scraper written in R [@Team2014] to read messages from Ecolog from the years 2000 - 2015. This program pulled the Ecolog message, message date and message subject for each posting.  Messages from Ecolog were used as the basis for the document corpus, which was then transformed into a term matrix using text analysis tools in the `tm` package for R [@feinerer2012tm;@meyer2008text]. Data pre-processing included the removal of excess whitespace, punctuation, and HTML tags and entities (all processing is preserved in the file `load_terms.R`) using `tm_map` function from the `tm` package [@feinerer2012tm;@meyer2008text]. To eliminate pseudo-duplicates ("student" and "students") we used word stemming implemented as part of the `snowballC` package.  Because of the volume of messages, we removed all sparse terms, retaining only the top 1% by count.
 
-We classified `r nrow(all_runs)` records by hand using a Shiny [@chang2015shiny] application (available publically [here](http://ec2-52-0-223-101.compute-1.amazonaws.com:3838/ESA_Shiny/)).  Messages were identified as academic job ads, non-academic job ads (generally), and non-job postings. Academic job adds were classified into graduate, postdoctoral, and tenure track positions, and then also classified as interdisciplinary or not.  In addition, we provided the opportunity to classify salary type, but do not present this data here.  
+We classified `r nrow(all_runs)` records by hand using a Shiny [@chang2015shiny] application.  Messages were identified as academic job ads, non-academic job ads (generally), and non-job postings. Academic job adds were classified into undergraduate, graduate, postdoctoral, and tenure track positions, and then also classified as interdisciplinary or not.  In addition, we provided the opportunity to classify salary type, but do not present this data here.  
 
 Using the surveyed messages, we built a model using a random forest to classify them as tenure track jobs, postdoctoral positions and graduate positions, and to test whether they indicate interdisciplinarity [package *randomForest*; @LiawWiener2002RF].  Based on the model constructed we then predict the class of the remaining messages to build a time series of job ads.  Because hand coding messages was an iterative process, we used the confusion matrix from the predictive models to weight Ecolog messages selected for display and classification in the Shiny app.  Messages that were predicted to be interdisciplinary from the partial models were weighted most highly, as were messages with high rates of confusion for tenure track, postdoctoral or graduate positions.
 
@@ -107,16 +107,22 @@ The frequency of terms in the Ecolog corpus follows a log distribution.  The mos
 
 ```{r importance_sorting, echo=FALSE, message=FALSE, warning=FALSE}
 
-imp_table <- data.frame(Tenure = names(sort(importance(is.job.rf)[,])),
-                        PostDoc= names(sort(importance(is.pdc.rf)[,])),
-                        Graduate= names(sort(importance(is.gra.rf)[,])),
+imp_table <- data.frame(Tenure   = names(sort(importance(is.job.rf)[,])),
+                        PostDoc  = names(sort(importance(is.pdc.rf)[,])),
+                        Graduate = names(sort(importance(is.gra.rf)[,])),
                         Interdisciplinary = names(sort(importance(is.int.rf)[,])),
                         stringsAsFactors = FALSE)[nrow(importance(is.job.rf)):1,]
 
-cross_over <- matrix(ncol=4, nrow=4)
-for(i in 2:4){for(j in 1:i){
-  cross_over[i,j] <- round(sum(imp_table[1:87,i] %in% imp_table[1:87,j]) / 87 * 100, 1)
-}}
+cross_over <- matrix(ncol = 4, nrow = 4)
+
+for (i in 2:4) {
+  for (j in 1:i) {
+    # Why am I picking the first 87 rows?  Because that's the top 2%
+    # of terms:
+    cross <- sum(imp_table[1:87,i] %in% imp_table[1:87,j])
+    cross_over[i,j] <- round(cross / 87 * 100, 1)
+  }
+}
 
 colnames(cross_over) <- colnames(imp_table)
 rownames(cross_over) <- colnames(imp_table)
@@ -125,7 +131,7 @@ pander(cross_over[-1,-4], split.tables = Inf)
 
 ```
 
-Four independent random forest models were also constructed to enable us to assess term importance for each individual employment class and for interdisciplinary postings.  While the overall model (7 classes) has an out-of-bag error estimate of 18.4%, the highest error rates within any one class occur between classes and their "interdisciplinary" alternative.  This indicates higher rates of uncertainty within classes, and particularly, potential differences in the terms used for interdisciplinarity between job classes.
+Four independent random forest models were constructed to enable us to assess term importance for each individual employment class and for interdisciplinary postings.  While the overall model (7 classes) has an out-of-bag error estimate of 18.4%, the highest error rates within any one class occur between classes and their "interdisciplinary" alternative.  This indicates higher rates of uncertainty within classes, and particularly, potential differences in the terms used for interdisciplinarity between job classes.
 
 **Table 2.**  *Confusion matrix for the complete random forest model. The confusion matrix shows the hand classified coding in rows and the model classifications in the columns. For example, of the 64 postings classified as "interdisciplinary tenure track" (TT_Int), the random forest model classified one message as a graduate student position, one as an interdisciplinary postdoctoral position (PD_Int) and 13 as non-interdisciplinary Tenure track positions. The Class Error is the proportion of incorrectly classified samples for any one class.*
 
@@ -135,16 +141,20 @@ pander(full.rf$confusion, round = 2, split.tables = Inf)
 
 ```
 
-The random forest model provides an importance table, indicating the utility of a term in classifying individual messages into the various classes.  The importance value represents the mean decrease in the Gini index across trees when the particular variable is used as a classifier. The tables themselves are very long, but rank of individual terms can provide some insight into the processes underlying the hiring trends in ecology.  Tenure-track and postdoctoral positions show higher cross-over of high-importance terms than do tenure-track and graduate positions (or postdoctoral and graduate positions).  Both graduate and postdoctoral positions show much higher cross-over with interdisciplinary terms than do terms of importance for tenure-track postings.
+The random forest model provides an importance table, indicating the utility of a term in classifying individual messages into the various classes.  The importance value represents the mean decrease in the Gini index across trees when the particular variable is used as a classifier.  The importance tables for each class are very long, but rank of individual terms can provide some insight into the processes underlying the hiring trends in ecology.  Tenure-track and postdoctoral positions show higher cross-over of high-importance terms than do tenure-track and graduate positions (or postdoctoral and graduate positions).  Both graduate and postdoctoral positions show much higher cross-over with interdisciplinary terms than do terms of importance for tenure-track postings.
 
 **Table 3**. *Importance terms for the classification of Tenure Track, Postdoctoral, and Graduate student positions.  Terms are sorted in order of relative importance from top (most important) to bottom (lower importance). Bolded terms represent terms that are unique within the top 99%ile of terms for the class. Many of the top key terms for positions relate specifically to those positions (tenure track, graduate).*
 
 ```{r importance_table, echo=FALSE, warning = FALSE, message=FALSE, result = 'as-is'}
 
-imp_table <- data.frame(Tenure = tail(names(sort(importance(is.job.rf)[,])), n=20),
-                        PostDoc=tail(names(sort(importance(is.pdc.rf)[,])), n=20),
-                        Graduate= tail(names(sort(importance(is.gra.rf)[,])), n=20),
-                        Interdisciplinary = tail(names(sort(importance(is.int.rf)[,])), n=20),
+imp_table <- data.frame(Tenure   = tail(names(sort(importance(is.job.rf)[,])), 
+                                        n = 20),
+                        PostDoc  = tail(names(sort(importance(is.pdc.rf)[,])), 
+                                        n = 20),
+                        Graduate = tail(names(sort(importance(is.gra.rf)[,])), 
+                                        n = 20),
+                        Interdisciplinary = tail(names(sort(importance(is.int.rf)[,])),
+                                                 n = 20),
                         stringsAsFactors = FALSE)[20:1,]
 
 rownames(imp_table) <- NULL
@@ -155,8 +165,8 @@ imp_table <- apply(imp_table, 2, function(x){x[!x %in% unlist(imp_table)[duplica
 pander(imp_table, split.tables = Inf)
 
 
-rep.row<-function(x,n){
-   matrix(rep(x,each=n),nrow=n)
+rep.row <- function(x,n) {
+   matrix(rep(x,each = n),nrow = n)
 }
 
 # This is where we pull out the date.  For each list in all.messages (representing a
@@ -184,56 +194,88 @@ all_cast <- dcast(all_preds, date ~ prediction, value.var = 'count',
                   fun.aggregate = sum)
 
 #  Are we looking at the total number of messages, or the total number of jobs?
-total.job <- rowSums(all_cast[,-c(1, 4)])
+total.job <- rowSums(all_cast[,-c(1, 3, 4)])
 total.msg <- rowSums(all_cast[,-c(1)])
 
 #all_cast[,2:8] <- all_cast[,2:8] / rowSums(all_cast[,2:8])
             
 all_melt <- melt(all_cast, id.vars = c('date'))
 
-all_melt <- subset(all_melt, date <= 2015 & !variable %in% 'Other')
-all_melt$int <- regexpr("Int", all_melt$variable)>0
+all_melt <- subset(all_melt, date <= 2015 & !variable %in% c('Other job', "Non-job", "SE_unp"))
+all_melt$int <- regexpr("Int", all_melt$variable) > 0
 
-all_melt$variable <- substr(all_melt$variable, 1,2)
+all_melt$variable <- substr(all_melt$variable, 1, 2) # Just get the first two letters.
 
 all_melt$fail_job <- total.job[match(all_melt$date, all_cast$date)] - all_melt$value
 all_melt$fail_msg <- total.msg[match(all_melt$date, all_cast$date)] - all_melt$value
+all_melt$total_class <- NA
 
+for (i in 1:nrow(all_melt)) {
+  good_match <- which(all_melt[,1] == all_melt[i, 1] &
+                        all_melt[,2] %in% all_melt[i,2])
+  
+  all_melt$total_class[i] <- sum(all_melt$value[good_match])
+
+}
 
 source('R/detrending_model.R')
 
-all_melt$class <- factor(all_melt$variable, labels = c("Graduate", 'Postdoctoral', 'Tenure Track'))
+all_melt$class <- factor(all_melt$class, labels = c("Graduate", 'Postdoctoral', 'Tenure Track'))
 
 saveRDS(all_melt, 'data/all_melt.RDS')
 
-ggplot(all_melt, aes(x = date, y = I(value/(fail_msg+value)))) + 
+ggplot(all_melt, aes(x = date, y = I(value/total_class))) + 
   geom_point(aes(color = int), alpha = 0.5) +
   geom_smooth(span = 0.08, 
-              aes(linetype=int),
-              se=FALSE, size = 2) +
+              aes(linetype = int),
+              se = FALSE, size = 1) +
   theme_bw() + facet_wrap(~class) +
   scale_linetype_discrete(guide = guide_legend(title = "Interdisciplinary")) +
-  scale_color_brewer(type='qual', 
+  scale_color_brewer(type = 'qual', 
                      guide  = guide_legend(title = "Position")) +
   scale_x_continuous(breaks = seq(2000, 2010, by = 5)) +
-  scale_y_continuous(breaks = seq(0.05, .25, by = .05)) +
-  coord_cartesian(xlim=c(2000, 2015), ylim = c(0, 0.25), expand=0) +
+  #scale_y_continuous(breaks = seq(0.05, .25, by = .05)) +
+  coord_cartesian(xlim = c(2000, 2015), ylim = c(0, 1), expand = 0) +
   xlab('Year') +
   ylab('Proportion of Messages') +
-  theme(axis.text = element_text(family='serif', size = 16),
-        axis.title = element_text(family='serif', size = 18, face = 'bold'),
+  theme(axis.text = element_text(family = 'serif', size = 16),
+        axis.title = element_text(family = 'serif', size = 18, face = 'bold'),
         #legend.text = element_text(family='serif', size = 14),
-        strip.text =  element_text(family='serif', size = 16, face = 'bold'))
+        strip.text =  element_text(family = 'serif', size = 16, face = 'bold'))
 
 ```
 
-**Figure 2.** *Job postings as a proportion of all postings on ECOLOG. Postings for graduate student positions increase strongly from 2000 - 2015 as do postdoctoral position postings.  Tenure track postings appear to remain relatively stable through time.  Interdisciplinary postings remain low through time and appear to increase at a rate equal to, or lower than the disciplinary postings.*
+**Figure 2.** *Job postings as a proportion of postings within each class on ECOLOG.*
 
-Seasonal trends suggest differences in timing and intensity for the different job classes (Figure 3).  In all cases the amplitude of the disciplinary curve is much higher than the amplitude of the interdisciplinary curve, although this may be, in part, a function of the total number of postings.  The timing of peak posting and the lowest rates of posting also varies by class.  The lowest proportion of postings for graduate positions occurs at the end of July (as with Postdoctoral positions), while the lowest volume for Tenure Track positions occurs a month earlier in June.  The peak time of tenure track posting occurs in mid-November (similar to Postdoctoral postings), while the graduate posting peak appears to be broader, with a peak in late February.
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(all_melt, aes(x = date, y = I(value/(value + total.job)))) + 
+  geom_point(aes(color = int), alpha = 0.5) +
+  geom_smooth(span = 0.16, 
+              aes(linetype = int),
+              se = FALSE, size = 1) +
+  theme_bw() + facet_wrap(~class) +
+  scale_linetype_discrete(guide = guide_legend(title = "Interdisciplinary")) +
+  scale_color_brewer(type = 'qual', 
+                     guide  = guide_legend(title = "Position")) +
+  scale_x_continuous(breaks = seq(2000, 2010, by = 5)) +
+  scale_y_continuous(breaks = seq(0.05, .25, by = .05)) +
+  coord_cartesian(xlim = c(2000, 2015), ylim = c(0, 0.5), expand = 0) +
+  xlab('Year') +
+  ylab('Proportion of Job Ads') +
+  theme(axis.text = element_text(family = 'serif', size = 16),
+        axis.title = element_text(family = 'serif', size = 18, face = 'bold'),
+        #legend.text = element_text(family='serif', size = 14),
+        strip.text =  element_text(family = 'serif', size = 16, face = 'bold'))
+
+```
+
+**Figure 3.** *Job postings as a proportion of all postings on ECOLOG.*
+
+Seasonal trends suggest differences in timing and intensity for the different job classes (Figure 4).  In all cases the amplitude of the disciplinary curve is much higher than the amplitude of the interdisciplinary curve, although this may be, in part, a function of the total number of postings.  The timing of peak posting and the lowest rates of posting also varies by class.  The lowest proportion of postings for graduate positions occurs at the end of July (as with Postdoctoral positions), while the lowest volume for Tenure Track positions occurs a month earlier in June.  The peak time of tenure track posting occurs in mid-November (similar to Postdoctoral postings), while the graduate posting peak appears to be broader, with a peak in late February.
 
 ![weeklychange](figures/week_plot.tiff)
 
-**Figure 3**. *The seasonal trend in position posting shows differences between job classes, and between interdisciplinary and disciplinary postings. Panels represent job types and line coloring indicates whether a position in interdisciplinary (purple) or disciplinary (green).  Positive values suggest higher than average posting proportions.  The model is derived using a generalized additive mixed model, with job class as a random effect and a one year ARMA lag.*
+**Figure 4**. *The seasonal trend in position posting shows differences between job classes, and between interdisciplinary and disciplinary postings. Panels represent job types and line coloring indicates whether a position in interdisciplinary (purple) or disciplinary (green).  Positive values suggest higher than average posting proportions.  The model is derived using a generalized additive mixed model, with job class as a random effect and a one year ARMA lag.*
 
 All three types of postings appear somewhat bimodal, whereas the major peak for Tenure Track and Postdoctoral jobs occurs in November, the secondary peak is in the early spring, coincident with the Graduate position peak.
 
@@ -241,7 +283,7 @@ For interdisciplinary positions the amplitude of the seasonal trend is much lowe
 
 ![annualchange](figures/ann_plot.tiff)
 
-**Figure 4** *Annual trend for Ecolog job postings.  Overall there is a trend of increasing total postings for each job class, with interdisciplinary postings increasing at a lower rate for graduate and postdoctoral students than for tenure track positions, which have been subject to much greater fluctuations.*
+**Figure 5** *Annual trend for Ecolog job postings.  Overall there is a trend of increasing total postings for each job class, with interdisciplinary postings increasing at a lower rate for graduate and postdoctoral students than for tenure track positions, which have been subject to much greater fluctuations.*
 
 Year over year changes show considerable fluctuations.  In particular, a significant drop for disciplinary Graduate and Tenure Track postion posting volume (and for interdisciplinary Postdoc postings) occurs in 2004, while the same trend appears absent from the disciplinary postdoc postings and from the interdisciplinary Tenure Track and Graduate postings.
 
