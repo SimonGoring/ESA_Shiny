@@ -113,10 +113,10 @@ if(any(!curr_RDS %in% old_RDS)){
   # Okay, there are classes I want to push upwards:
   pred_good <- rep(0, nrow(predict_prob))
   pred_good[all_runs$msg[!all_runs$msg %in% 55778]] <- pred_good[all_runs$msg[!all_runs$msg %in% 55778]] - 1
-  pred_good[predict_prob$`Non-job` > 0.6] <- pred_good[predict_prob$`Non-job` > 0.6] + .25
-  pred_good[predict_prob$`Other job` > 0.6] <- pred_good[predict_prob$`Other job` > 0.6] + .25
-  pred_good[predict_prob$PD + predict_prob$PD_Int > 0.6] <- pred_good[predict_prob$PD + predict_prob$PD_Int > 0.6] + 3
-  pred_good[predict_prob$TT + predict_prob$TT_Int > 0.6] <- pred_good[predict_prob$TT + predict_prob$TT_Int > 0.6] + 3
+  pred_good[predict_prob[,"Non-job"] > 0.6] <- pred_good[predict_prob[,"Non-job"] > 0.6] + .25
+  pred_good[predict_prob[,"Other job"] > 0.6] <- pred_good[predict_prob[,"Other job"] > 0.6] + .25
+  pred_good[predict_prob[,"PD"] + predict_prob[,"PD_Int"] > 0.6] <- pred_good[predict_prob[,"PD"] + predict_prob[,"PD_Int"] > 0.6] + 3
+  pred_good[predict_prob[,"TT"] + predict_prob[,"TT_Int"] > 0.6] <- pred_good[predict_prob[,"TT"] + predict_prob[,"TT_Int"] > 0.6] + 3
   pred_good <- pred_good + abs(min(pred_good)) + 0.25
   
   pred_good <- pred_good / max(pred_good)
