@@ -21,6 +21,7 @@ if(any(!curr_RDS %in% old_RDS)){
   
   # To build the model:
   library(randomForest)
+  library(glmnet)
   
   all_runs <- readRDS(file = 'data/responses.RDS')
   
@@ -67,6 +68,7 @@ if(any(!curr_RDS %in% old_RDS)){
   
   dtm.pred <- data.frame(dtm.s99 > 0)
   
+  # randomForest
   #  Models are very slow!
   is.job.rf <- randomForest(tt.job ~ ., data = tenure_track, sampsize = c(30, 30))
   is.pdc.rf <- randomForest(postdo ~ ., data = postdoc, sampsize = c(30, 30))
