@@ -73,6 +73,9 @@ library(mgcv)
 library(pander)
 library(randomForest)
 library(reshape2)
+
+## RUN ALL FLAG:
+rerun <- FALSE
   
 myw2 <- expand.grid(week = 1:5, month = 1:12, year = 2000:2015)
 
@@ -248,7 +251,7 @@ ggplot(all_melt, aes(x = date, y = I(value/total_class))) +
 **Figure 2.** *Job postings as a proportion of postings within each class on ECOLOG.*
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(all_melt, aes(x = date, y = I(value/(value + total.job)))) + 
+ggplot(all_melt, aes(x = date, y = I(value/(total.job)))) + 
   geom_point(aes(color = int), alpha = 0.5) +
   geom_smooth(span = 0.16, 
               aes(linetype = int),
@@ -269,11 +272,32 @@ ggplot(all_melt, aes(x = date, y = I(value/(value + total.job)))) +
 
 ```
 
-**Figure 3.** *Job postings as a proportion of all postings on ECOLOG.*
+**Figure 3.** *Job postings as a proportion of all postings on ECOLOG, including non-job postings.*
 
 Seasonal trends suggest differences in timing and intensity for the different job classes (Figure 4).  In all cases the amplitude of the disciplinary curve is much higher than the amplitude of the interdisciplinary curve, although this may be, in part, a function of the total number of postings.  The timing of peak posting and the lowest rates of posting also varies by class.  The lowest proportion of postings for graduate positions occurs at the end of July (as with Postdoctoral positions), while the lowest volume for Tenure Track positions occurs a month earlier in June.  The peak time of tenure track posting occurs in mid-November (similar to Postdoctoral postings), while the graduate posting peak appears to be broader, with a peak in late February.
 
-![weeklychange](figures/week_plot.tiff)
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot(all_melt, aes(x = month, y = I(value/(total.job)))) + 
+  geom_point(aes(color = int), alpha = 0.5) +
+  geom_smooth(span = 0.16, 
+              aes(linetype = int),
+              se = FALSE, size = 1) +
+  theme_bw() + facet_wrap(~class) +
+  scale_linetype_discrete(guide = guide_legend(title = "Interdisciplinary")) +
+  scale_color_brewer(type = 'qual', 
+                     guide  = guide_legend(title = "Interdisciplinary")) +
+  #scale_x_continuous(breaks = seq(2000, 2010, by = 5)) +
+  scale_y_continuous(breaks = seq(0.05, .25, by = .05)) +
+  coord_cartesian(xlim = c(1, 12), ylim = c(0, 0.5), expand = 0) +
+  xlab('Month') +
+  ylab('Proportion of Job Ads') +
+  theme(axis.text = element_text(family = 'serif', size = 16),
+        axis.title = element_text(family = 'serif', size = 18, face = 'bold'),
+        #legend.text = element_text(family='serif', size = 14),
+        strip.text =  element_text(family = 'serif', size = 16, face = 'bold'))
+
+```
 
 **Figure 4**. *The seasonal trend in position posting shows differences between job classes, and between interdisciplinary and disciplinary postings. Panels represent job types and line coloring indicates whether a position in interdisciplinary (purple) or disciplinary (green).  Positive values suggest higher than average posting proportions.  The model is derived using a generalized additive mixed model, with job class as a random effect and a one year ARMA lag.*
 
@@ -281,9 +305,30 @@ All three types of postings appear somewhat bimodal, whereas the major peak for 
 
 For interdisciplinary positions the amplitude of the seasonal trend is much lower and there appears to be a shift from bimodal to unimodal posting seasonality.
 
-![annualchange](figures/ann_plot.tiff)
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
-**Figure 5** *Annual trend for Ecolog job postings.  Overall there is a trend of increasing total postings for each job class, with interdisciplinary postings increasing at a lower rate for graduate and postdoctoral students than for tenure track positions, which have been subject to much greater fluctuations.*
+ggplot(all_melt, aes(x = date, y = I(value/total_class))) + 
+  geom_point(aes(color = int), alpha = 0.5) +
+  geom_smooth(span = 0.16, 
+              aes(linetype = int),
+              se = FALSE, size = 1) +
+  theme_bw() + facet_wrap(~class) +
+  scale_linetype_discrete(guide = guide_legend(title = "Interdisciplinary")) +
+  scale_color_brewer(type = 'qual', 
+                     guide  = guide_legend(title = "Interdisciplinary")) +
+  scale_x_continuous(breaks = seq(2000, 2010, by = 5)) +
+  scale_y_continuous(breaks = seq(0.05, .25, by = .05)) +
+  coord_cartesian(xlim = c(2000, 2015), ylim = c(0, 0.5), expand = 0) +
+  xlab('Year') +
+  ylab('Proportion of Job Ads') +
+  theme(axis.text = element_text(family = 'serif', size = 16),
+        axis.title = element_text(family = 'serif', size = 18, face = 'bold'),
+        #legend.text = element_text(family='serif', size = 14),
+        strip.text =  element_text(family = 'serif', size = 16, face = 'bold'))
+
+```
+
+**Figure 5** *Annual trend of interdisciplinary postings as a proportion within job classes.*
 
 Year over year changes show considerable fluctuations.  In particular, a significant drop for disciplinary Graduate and Tenure Track postion posting volume (and for interdisciplinary Postdoc postings) occurs in 2004, while the same trend appears absent from the disciplinary postdoc postings and from the interdisciplinary Tenure Track and Graduate postings.
 

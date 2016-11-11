@@ -13,7 +13,7 @@
 curr_RDS <- list.files('data', pattern = '*evals[0-9][0-9]*', full.names = TRUE)
 old_RDS  <- readRDS('data/RDS_list.RDS')
 
-if(any(!curr_RDS %in% old_RDS)){
+if(any(!curr_RDS %in% old_RDS) & rerun == TRUE){
   source('R/merge_RDS.R')
   source('R/load_term.R')
   
