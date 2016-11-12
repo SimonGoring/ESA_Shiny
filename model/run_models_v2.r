@@ -77,7 +77,7 @@ plot_month_ind <- function(month_ind, suff){
   ggplot() + geom_point(data=subset(month_ind, quant == c('50%')), aes(x=factor(month), y=value, colour=factor(class)), size=3) +
     geom_pointrange(data=limits, aes(x=factor(month), ymin=ymin, y=y, ymax=ymax, colour=factor(class))) 
   
-  ggsave(paste0('figures/month_ind_', suff, '.pdf'))
+  #ggsave(paste0('figures/month_ind_', suff, '.pdf'))
   
 }
 
@@ -96,16 +96,39 @@ plot_month_shared <- function(month_shared, suff){
   # limits = aes(ymin=ymin, ymax=ymax)
   
   ggplot() + geom_point(data=subset(month_shared, quant == c('50%')), aes(x=factor(month), y=value), size=3) +
-    geom_pointrange(data=limits, aes(x=factor(month), ymin=ymin, y=y, ymax=ymax)) 
+    geom_pointrange(data=limits, aes(x=factor(month), ymin=ymin, y=y, ymax=ymax)) + 
+    ggtitle('Month shared')
   
-  ggsave(paste0('figures/month_shared_', suff, '.pdf'))
+  #ggsave(paste0('figures/month_shared_', suff, '.pdf'))
   
 }
 
 
+# # only works when there are individual month effects
+# plot_time_shared <- function(time_shared, suff){
+#   # month_ind = post_m2b$month_ind
+#   time_shared = apply(time_shared, c(2), function(x) quantile(x, probs=c(0.025, 0.5, 0.975)))
+#   time_shared = melt(time_shared)
+#   
+#   colnames(time_shared) = c('quant', 'time', 'value')
+#   
+#   ymin = subset(time_shared, quant == c('2.5%'))$value
+#   ymax = subset(time_shared, quant == c('97.5%'))$value
+#   y = subset(time_shared, quant == c('50%'))$value
+#   limits = data.frame(subset(time_shared, quant == c('2.5%'))[,1:3], ymin=ymin, ymax=ymax, y=y)
+#   # limits = aes(ymin=ymin, ymax=ymax)
+#   
+#   ggplot() + geom_point(data=subset(time_shared, quant == c('50%')), aes(x=factor(time), y=value), size=3) +
+#     geom_pointrange(data=limits, aes(x=factor(time), ymin=ymin, y=y, ymax=ymax)) + 
+#     ggtitle('Time shared')
+#   
+#   #ggsave(paste0('figures/time_shared_', suff, '.pdf'))
+#   
+# }
+
 # only works when there are individual month effects
-plot_time_shared <- function(time_shared, suff){
-  # month_ind = post_m2b$month_ind
+plot_time_shared <- function(post, suff){
+  time_shared = post$time_all
   time_shared = apply(time_shared, c(2), function(x) quantile(x, probs=c(0.025, 0.5, 0.975)))
   time_shared = melt(time_shared)
   
@@ -118,9 +141,32 @@ plot_time_shared <- function(time_shared, suff){
   # limits = aes(ymin=ymin, ymax=ymax)
   
   ggplot() + geom_point(data=subset(time_shared, quant == c('50%')), aes(x=factor(time), y=value), size=3) +
-    geom_pointrange(data=limits, aes(x=factor(time), ymin=ymin, y=y, ymax=ymax)) 
+    geom_pointrange(data=limits, aes(x=factor(time), ymin=ymin, y=y, ymax=ymax)) + 
+    ggtitle('Time shared')
   
-  ggsave(paste0('figures/time_shared_', suff, '.pdf'))
+  #ggsave(paste0('figures/time_shared_', suff, '.pdf'))
+  
+}
+
+# only works when there are individual month effects
+plot_time_individual <- function(post, suff){
+  time_ind = post$time_ind
+  time_ind = apply(time_ind, c(2,3), function(x) quantile(x, probs=c(0.025, 0.5, 0.975)))
+  time_ind = melt(time_ind)
+  
+  colnames(time_ind) = c('quant', 'class', 'time', 'value')
+  
+  ymin = subset(time_ind, quant == c('2.5%'))$value
+  ymax = subset(time_ind, quant == c('97.5%'))$value
+  y = subset(time_ind, quant == c('50%'))$value
+  limits = data.frame(subset(time_ind, quant == c('2.5%'))[,1:3], ymin=ymin, ymax=ymax, y=y)
+  # limits = aes(ymin=ymin, ymax=ymax)
+  
+  ggplot() + geom_point(data=subset(time_ind, quant == c('50%')), aes(x=factor(time), y=value), size=3) +
+    geom_pointrange(data=limits, aes(x=factor(time), ymin=ymin, y=y, ymax=ymax)) + 
+    ggtitle('Time ind')
+  
+  #ggsave(paste0('figures/time_shared_', suff, '.pdf'))
   
 }
 
@@ -147,9 +193,10 @@ plot_alphas <- function(alpha_ind, alpha_all, suff){
   # limits = aes(ymin=ymin, ymax=ymax)
   
   ggplot() + geom_point(data=subset(alpha, quant == c('50%')), aes(x=class, y=value), size=3) +
-    geom_pointrange(data=limits, aes(x=class, ymin=ymin, y=y, ymax=ymax)) 
+    geom_pointrange(data=limits, aes(x=class, ymin=ymin, y=y, ymax=ymax)) + 
+    ggtitle('Constants')
   
-  ggsave(paste0('figures/alpha_', suff, '.pdf'))
+  #ggsave(paste0('figures/alpha_', suff, '.pdf'))
 }
 
 plot_time_slopes <- function(time_slope_ind, time_slope_all, suff){
@@ -175,9 +222,10 @@ plot_time_slopes <- function(time_slope_ind, time_slope_all, suff){
   # limits = aes(ymin=ymin, ymax=ymax)
   
   ggplot() + geom_point(data=subset(alpha, quant == c('50%')), aes(x=class, y=value), size=3) +
-    geom_pointrange(data=limits, aes(x=class, ymin=ymin, y=y, ymax=ymax)) 
+    geom_pointrange(data=limits, aes(x=class, ymin=ymin, y=y, ymax=ymax))  + 
+    ggtitle('Time slope')
   
-  ggsave(paste0('figures/time_slopes_', suff, '.pdf'))
+  #ggsave(paste0('figures/time_slopes_', suff, '.pdf'))
 }
 
 plot_preds <- function(all, post, suff){
@@ -189,9 +237,10 @@ plot_preds <- function(all, post, suff){
               data.frame(date=date, value=all$y_pd/all$N_pd, class=rep('Postdoctoral'), type='data'),
               data.frame(date=date, value=all$y_gr/all$N_gr, class=rep('Graduate'), type='data'))
   
-  ggplot() + geom_line(data=dat, aes(x=date, y=value, colour=type)) + facet_grid(class~.)
+  ggplot() + geom_line(data=dat, aes(x=date, y=value, colour=type)) + facet_grid(class~.) + 
+    ggtitle('Interdisciplinary jobs by class')
   
-  ggsave(paste0('figures/preds_', suff, '.pdf'))
+  #ggsave(paste0('figures/preds_', suff, '.pdf'))
 }
 
 ########################################################################################################################################
@@ -289,492 +338,31 @@ post_m4c   <- extract(fit_m4c)
 ## plot parameters estimates 
 ########################################################################################################################################
 
+pdf(file=paste0('figures/model_4.pdf'))
 plot_month_ind(post_m4$month_ind, '4')
-plot_month_ind(post_m4a$month_ind, '4a')
-plot_month_ind(post_m4b$month_ind, '4b')
-
 plot_alphas(post_m4$alpha_ind, post_m4$alpha_all, '4')
-plot_alphas(post_m4a$alpha_ind, post_m4a$alpha_all, '4a')
-plot_alphas(post_m4b$alpha_ind, post_m4b$alpha_all, '4b')
-plot_alphas(post_m4c$alpha_ind, post_m4c$alpha_all, '4c')
-
 plot_time_slopes(post_m4$time_slope_ind, post_m4$time_slope_all, '4')
-plot_time_slopes(post_m4a$time_slope_ind, post_m4a$time_slope_all, '4a')
-plot_time_slopes(post_m4b$time_slope_ind, post_m4b$time_slope_all, '4b')
-plot_time_slopes(post_m4c$time_slope_ind, post_m4c$time_slope_all, '4c')
-
 plot_preds(all, post_m4, '4')
+plot_time_shared(post_m4, '4')
+dev.off()
+
+pdf(file=paste0('figures/model_4a.pdf'))
+plot_month_ind(post_m4a$month_ind, '4a')
+plot_alphas(post_m4a$alpha_ind, post_m4a$alpha_all, '4a')
+plot_time_slopes(post_m4a$time_slope_ind, post_m4a$time_slope_all, '4a')
 plot_preds(all, post_m4a, '4a')
+plot_time_individual(post_m4a, '4a')
+dev.off()
+
+pdf(file=paste0('figures/model_4b.pdf'))
+plot_month_ind(post_m4b$month_ind, '4b')
+plot_alphas(post_m4b$alpha_ind, post_m4b$alpha_all, '4b')
+plot_time_slopes(post_m4b$time_slope_ind, post_m4b$time_slope_all, '4b')
 plot_preds(all, post_m4b, '4b')
+dev.off()
+
+pdf(file=paste0('figures/model_4c.pdf'))
+plot_alphas(post_m4c$alpha_ind, post_m4c$alpha_all, '4c')
+plot_time_slopes(post_m4c$time_slope_ind, post_m4c$time_slope_all, '4c')
 plot_preds(all, post_m4c, '4c')
-# plot_time_shared(post_m4$time_shared, '4')
-###################################################################################################################
-
-pdf(file='figures/model2.pdf', width=10)
-plot(fit_m2, pars=c('alpha_all', 'alpha'))
-plot(fit_m2, pars=paste0('time_effect'))
-
-library(reshape2)
-beta = post_m2$beta
-beta_mean = apply(beta, c(2,3), mean)
-beta_mean = melt(beta_mean)
-
-ggplot(beta_mean) + geom_point(aes(x=value, y=Var2, colour=factor(Var1)), size=3)
-
-plot(fit_m2, pars=paste0('beta_month'))
-
-par(mfrow=c(1,1))
-plot(date, all$y_tt/all$N_tt, type='l')
-lines(date, colMeans(post_m2[['theta_tt']]), col='blue')
-
-plot(date,  all$y_pd/all$N_pd, type='l')
-lines(date, colMeans(post_m2[['theta_pd']]), col='blue')
-
-plot(date,  all$y_gr/all$N_gr, type='l')
-lines(date, colMeans(post_m2[['theta_gr']]), col='blue')
 dev.off()
-
-
-
-########################################################################################################################################
-##
-########################################################################################################################################
-
-
-
-pdf(file='figures/model2a.pdf', width=10)
-plot(fit_m2a, pars=c('alpha_all', 'alpha_ind'))
-
-library(reshape2)
-beta = post_m2a$beta
-beta_mean = apply(beta, c(2,3), mean)
-beta_mean = melt(beta_mean)
-
-ggplot(beta_mean) + geom_point(aes(x=value, y=Var2, colour=factor(Var1)), size=3)
-
-time_e = post_m2a$time_effect
-time_e_mean = apply(time_e, c(2,3), mean)
-time_e_mean = melt(time_e_mean)
-ggplot(time_e_mean) + geom_point(aes(x=Var2, y=value, colour=factor(Var1)), size=3)
-
-
-plot(fit_m2a, pars=paste0('beta_month'))
-
-par(mfrow=c(1,1))
-plot(date, all$y_tt/all$N_tt, type='l')
-lines(date, colMeans(post_m2a[['theta_tt']]), col='blue')
-
-plot(date,  all$y_pd/all$N_pd, type='l')
-lines(date, colMeans(post_m2a[['theta_pd']]), col='blue')
-
-plot(date,  all$y_gr/all$N_gr, type='l')
-lines(date, colMeans(post_m2a[['theta_gr']]), col='blue')
-dev.off()
-
-plot_month_ind(post_m2a$month_ind)
-
-
-########################################################################################################################################
-##
-########################################################################################################################################
-
-
-
-pdf(file='figures/model2b.pdf', width=10)
-plot(fit_m2b, pars=c('alpha_all', 'alpha_ind'))
-
-library(reshape2)
-month_ind = post_m2b$month_ind
-month_ind = apply(month_ind, c(2,3), mean)
-month_ind = melt(month_ind)
-
-ggplot(month_ind) + geom_point(aes(y=value, x=factor(Var2), colour=factor(Var1)), size=3)
-
-time_e = post_m2b$time_effect
-time_e_mean = apply(time_e, c(2,3), mean)
-time_e_mean = melt(time_e_mean)
-ggplot(time_e_mean) + geom_point(aes(x=factor(Var2), y=value, colour=factor(Var1)), size=3)
-
-
-plot(fit_m2b, pars=paste0('month_all'))
-
-par(mfrow=c(1,1))
-plot(date, all$y_tt/all$N_tt, type='l')
-lines(date, colMeans(post_m2b[['theta_tt']]), col='blue')
-
-plot(date,  all$y_pd/all$N_pd, type='l')
-lines(date, colMeans(post_m2b[['theta_pd']]), col='blue')
-
-plot(date,  all$y_gr/all$N_gr, type='l')
-lines(date, colMeans(post_m2b[['theta_gr']]), col='blue')
-dev.off()
-
-# plot individual month effects
-plot_month_ind(post_m2b$month_ind)
-
-########################################################################################################################################
-##
-########################################################################################################################################
-
-
-pdf(file='figures/model1c.pdf', width=10)
-plot(fit_m1c, pars=c('alpha_all', 'alpha'))
-plot(fit_m1c, pars=c('year_slope'))
-
-library(reshape2)
-year_ind = post_m1b$year_ind
-year_ind_mean = apply(year_ind, c(2,3), mean)
-year_ind_mean = melt(year_ind_mean)
-ggplot(year_ind_mean) + geom_point(aes(x=factor(Var2), y=value, colour=factor(Var1)), size=3)
-
-plot(fit_m1c, pars=paste0('beta_month'))
-
-par(mfrow=c(1,1))
-plot(date, all$y_tt/all$N_tt, type='l')
-lines(date, colMeans(post_m1c[['theta_tt']]), col='blue')
-
-plot(date,  all$y_pd/all$N_pd, type='l')
-lines(date, colMeans(post_m1c[['theta_pd']]), col='blue')
-
-plot(date,  all$y_gr/all$N_gr, type='l')
-lines(date, colMeans(post_m1c[['theta_gr']]), col='blue')
-dev.off()
-
-########################################################################################################################################
-##
-########################################################################################################################################
-
-fit_m1d <- stan(file    = 'model1d.stan', 
-                data    = all, 
-                iter    = 200, 
-                chains  = 1, 
-                control = list(max_treedepth=12))
-post_m1d   <- extract(fit_m1d)
-
-pdf(file='figures/model1d.pdf', width=10)
-plot(fit_m1d, pars=c('alpha_all', 'alpha'))
-plot(fit_m1d, pars=c('year_slope'))
-
-beta = post_m1d$beta
-beta_mean = apply(beta, c(2,3), mean)
-beta_mean = melt(beta_mean)
-beta_mean$Var1 = classes[beta_mean$Var1]
-ggplot(beta_mean) + geom_point(aes(x=factor(Var2), y=value, colour=factor(Var1)), size=3) + xlab("Month") + ylab("Value")
-
-year_ind = post_m1d$year_ind
-year_ind_mean = apply(year_ind, c(2,3), mean)
-year_ind_mean = melt(year_ind_mean)
-year_ind_mean$Var2 = years[year_ind_mean$Var2]
-year_ind_mean$Var1 = classes[year_ind_mean$Var1]
-ggplot(year_ind_mean) + geom_point(aes(x=factor(Var2), y=value, colour=factor(Var1)), size=3) + xlab("Year")
-
-plot(fit_m1d, pars=paste0('beta_month'))
-
-par(mfrow=c(1,1))
-plot(date, all$y_tt/all$N_tt, type='l')
-lines(date, colMeans(post_m1d[['theta_tt']]), col='blue')
-
-plot(date,  all$y_pd/all$N_pd, type='l')
-lines(date, colMeans(post_m1d[['theta_pd']]), col='blue')
-
-plot(date,  all$y_gr/all$N_gr, type='l')
-lines(date, colMeans(post_m1d[['theta_gr']]), col='blue')
-dev.off()
-
-########################################################################################################################################
-##
-########################################################################################################################################
-
-fit_m1e <- stan(file    = 'model1e.stan', 
-                data    = all, 
-                iter    = 200, 
-                chains  = 1, 
-                control = list(max_treedepth=12))
-post_m1e   <- extract(fit_m1e)
-
-pdf(file='figures/model1e.pdf', width=10)
-plot(fit_m1e, pars=c('alpha_all', 'alpha'))
-plot(fit_m1e, pars=c('year_slope'))
-plot(fit_m1e, pars=c('year_effect'))
-
-beta = post_m1e$beta
-beta_mean = apply(beta, c(2,3), mean)
-beta_mean = melt(beta_mean)
-beta_mean$Var1 = classes[beta_mean$Var1]
-ggplot(beta_mean) + geom_point(aes(x=factor(Var2), y=value, colour=factor(Var1)), size=3) + xlab("Month") + ylab("Value")
-
-par(mfrow=c(1,1))
-plot(date, all$y_tt/all$N_tt, type='l')
-lines(date, colMeans(post_m1e[['theta_tt']]), col='blue')
-
-plot(date,  all$y_pd/all$N_pd, type='l')
-lines(date, colMeans(post_m1e[['theta_pd']]), col='blue')
-
-plot(date,  all$y_gr/all$N_gr, type='l')
-lines(date, colMeans(post_m1e[['theta_gr']]), col='blue')
-dev.off()
-########################################################################################################################################
-
-# fit_m1 <- stan(file    = 'ecolog_m1.stan', 
-#                data    = all, 
-#                iter    = 200, 
-#                chains  = 1, 
-#                control = list(max_treedepth=12))
-# post_m1   <- extract(fit_m1)
-# 
-# plot(fit_m1, pars=c('alpha_tt', 'alpha_pd', 'alpha_gr'))
-# plot(fit_m1, pars=paste0('beta_t[', seq(1, T), ']'))
-# plot(fit_m1, pars=paste0('beta_tt[', seq(1, 12), ']'))
-# plot(fit_m1, pars=paste0('beta_pd[', seq(1, 12), ']'))
-# plot(fit_m1, pars=paste0('beta_gr[', seq(1, 12), ']'))
-# 
-# plot(date, colMeans(post_m1[['beta_t']]), type='l')
-# plot(month,colMeans(post_m1[['beta_t']]))
-# acf(colMeans(post_m1[['beta_t']]))
-# plot(post_m1[['beta_t']][,11], type='l')
-# 
-# pdf(file='figures/ecolog_m1.pdf', height=10, width=12)
-# par(mfrow=c(1,1))
-# plot(date, tt$y/tt$total, type='l')
-# lines(date, colMeans(post_m1[['theta_tt']]), col='blue')
-# 
-# plot(date, pd$y/pd$total, type='l')
-# lines(date, colMeans(post_m1[['theta_pd']]), col='blue')
-# 
-# plot(date, gr$y/gr$total, type='l')
-# lines(date, colMeans(post_m1[['theta_gr']]), col='blue')
-# dev.off()
-# 
-# beta_gr = colMeans(post_m1[['beta_gr']])
-# beta_tt = colMeans(post_m1[['beta_tt']])
-# beta_pd = colMeans(post_m1[['beta_pd']])
-# 
-# plot(seq(1,12), beta_gr, ylim=c(52,max(beta_pd)))
-# points(seq(1,12), beta_tt, col='blue')
-# points(seq(1,12), beta_pd, col='red')
-# 
-# #####################################################################################################################################
-# 
-# fit_m2 <- stan(file = 'ecolog_m2.stan', data = all, 
-#             iter = 200, chains = 1, control = list(max_treedepth=13))
-# post_m2   <- extract(fit_m2)
-# 
-# plot(fit_m2, pars=c('alpha_tt', 'alpha_pd', 'alpha_gr'))
-# plot(fit_m2, pars=c('alpha_tt1', 'alpha_pd1', 'alpha_gr1'))
-# 
-# plot(fit_m2, pars=paste0('sigma[', seq(1, 3), ']'))
-# plot(fit_m2, pars=paste0('beta_tt[', seq(1, 12), ']'))
-# plot(fit_m2, pars=paste0('beta_pd[', seq(1, 12), ']'))
-# plot(fit_m2, pars=paste0('beta_gr[', seq(1, 12), ']'))
-# 
-# pdf(file='figures/ecolog_m2.pdf', height=10, width=12)
-# par(mfrow=c(1,1))
-# plot(date, tt$y/tt$total, type='l')
-# lines(date, colMeans(post_m2[['theta_tt']]), col='blue')
-# 
-# plot(date, pd$y/pd$total, type='l')
-# lines(date, colMeans(post_m2[['theta_pd']]), col='blue')
-# 
-# plot(date, gr$y/gr$total, type='l')
-# lines(date, colMeans(post_m2[['theta_gr']]), col='blue')
-# dev.off()
-# 
-# 
-# #####################################################################################################################################
-# 
-# fit_m3 <- stan(file = 'ecolog_m3.stan', data = all, 
-#                iter = 200, chains = 1, control = list(max_treedepth=13))
-# post_m3   <- extract(fit_m3)
-# 
-# plot(fit_m3, pars=c('alpha_tt', 'alpha_pd', 'alpha_gr'))
-# plot(fit_m3, pars=c('alpha_tt1', 'alpha_pd1', 'alpha_gr1'))
-# 
-# plot(fit_m3, pars=paste0('sigma[', seq(1, 3), ']'))
-# plot(fit_m3, pars=paste0('beta_tt[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta_pd[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta_gr[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta_all[', seq(1, 12), ']'))
-# 
-# pdf(file='figures/ecolog_m3.pdf', height=10, width=12)
-# par(mfrow=c(1,1))
-# plot(date, all$y_tt/all$N_tt, type='l')
-# lines(date, colMeans(post_m3[['theta_tt']]), col='blue')
-# 
-# plot(date, all$y_pd/all$N_pd, type='l')
-# lines(date, colMeans(post_m3[['theta_pd']]), col='blue')
-# 
-# plot(date, all$y_gr/all$N_gr, type='l')
-# lines(date, colMeans(post_m3[['theta_gr']]), col='blue')
-# dev.off()
-# 
-# 
-# plot(date, colMeans(post_m3[['beta_t']]), type='l')
-# plot(month,colMeans(post_m3[['beta_t']]))
-# acf(colMeans(post_m3[['beta_t']]))
-# 
-# 
-# mes = data.frame(rbind(cbind(colMeans(post_m3$beta_pd), rep('Postdoctoral', 12), seq(1,12)), 
-#                        cbind(colMeans(post_m3$beta_gr), rep('Graduate', 12), seq(1,12)), 
-#                        cbind(colMeans(post_m3$beta_tt), rep('tt', 12), seq(1,12)))) 
-# colnames(mes) = c('value', 'type', 'month')
-# mes$value = as.numeric(mes$value)
-# 
-# mes$month = factor(mes$month, levels=seq(1,12))
-# 
-# ggplot(data=mes) + geom_point(aes(x=factor(month), y=value, colour=type)) #+ scale_y_continous(breaks=)
-# 
-# #####################################################################################################################################
-# 
-# fit_m5 <- stan(file = 'ecolog_m5.stan', data = all, 
-#                iter = 200, chains = 1, control = list(max_treedepth=13))
-# post_m5   <- extract(fit_m5)
-# 
-# plot(fit_m5, pars=c('alpha'))
-# plot(fit_m5, pars=c('beta'))
-# plot(fit_m5, pars=c('beta_t'))
-# 
-# plot(fit_m5, pars=c('alpha_tt', 'alpha_pd', 'alpha_gr'))
-# plot(fit_m3, pars=c('alpha_tt1', 'alpha_pd1', 'alpha_gr1'))
-# 
-# plot(fit_m3, pars=paste0('sigma[', seq(1, 3), ']'))
-# plot(fit_m3, pars=paste0('beta_tt[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta_pd[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta_gr[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta_all[', seq(1, 12), ']'))
-# 
-# pdf(file='figures/ecolog_m5.pdf', height=10, width=12)
-# par(mfrow=c(1,1))
-# plot(date, all$y_tt/all$N_tt, type='l')
-# lines(date, colMeans(post_m3[['theta_tt']]), col='blue')
-# 
-# plot(date, all$y_pd/all$N_pd, type='l')
-# lines(date, colMeans(post_m3[['theta_pd']]), col='blue')
-# 
-# plot(date, all$y_gr/all$N_gr, type='l')
-# lines(date, colMeans(post_m3[['theta_gr']]), col='blue')
-# dev.off()
-# 
-# 
-# plot(date, colMeans(post_m3[['beta_t']]), type='l')
-# plot(month,colMeans(post_m3[['beta_t']]))
-# acf(colMeans(post_m3[['beta_t']]))
-# 
-# 
-# mes = data.frame(rbind(cbind(colMeans(post_m3$beta_pd), rep('Postdoctoral', 12), seq(1,12)), 
-#                        cbind(colMeans(post_m3$beta_gr), rep('Graduate', 12), seq(1,12)), 
-#                        cbind(colMeans(post_m3$beta_tt), rep('tt', 12), seq(1,12)))) 
-# colnames(mes) = c('value', 'type', 'month')
-# mes$value = as.numeric(mes$value)
-# 
-# mes$month = factor(mes$month, levels=seq(1,12))
-# 
-# ggplot(data=mes) + geom_point(aes(x=factor(month), y=value, colour=type)) #+ scale_y_continous(breaks=)
-# 
-# #####################################################################################################################################
-# 
-# fit_m6 <- stan(file = 'ecolog_m6.stan', data = all, 
-#                iter = 200, chains = 1, control = list(max_treedepth=13))
-# post_m6   <- extract(fit_m6)
-# 
-# fit_m7 <- stan(file = 'ecolog_m7.stan', data = all, 
-#                iter = 200, chains = 1, control = list(max_treedepth=13))
-# post_m7   <- extract(fit_m7)
-# 
-# plot(fit_m5, pars=c('alpha'))
-# plot(fit_m5, pars=c('beta'))
-# plot(fit_m5, pars=c('beta_t'))
-# 
-# plot(fit_m5, pars=c('alpha_tt', 'alpha_pd', 'alpha_gr'))
-# plot(fit_m3, pars=c('alpha_tt1', 'alpha_pd1', 'alpha_gr1'))
-# 
-# plot(fit_m3, pars=paste0('sigma[', seq(1, 3), ']'))
-# plot(fit_m3, pars=paste0('beta_tt[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta_pd[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta_gr[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta_all[', seq(1, 12), ']'))
-# 
-# pdf(file='figures/ecolog_m5.pdf', height=10, width=12)
-# par(mfrow=c(1,1))
-# plot(date, all$y_tt/all$N_tt, type='l')
-# lines(date, colMeans(post_m3[['theta_tt']]), col='blue')
-# 
-# plot(date, all$y_pd/all$N_pd, type='l')
-# lines(date, colMeans(post_m3[['theta_pd']]), col='blue')
-# 
-# plot(date, all$y_gr/all$N_gr, type='l')
-# lines(date, colMeans(post_m3[['theta_gr']]), col='blue')
-# dev.off()
-# 
-# 
-# plot(date, colMeans(post_m3[['beta_t']]), type='l')
-# plot(month,colMeans(post_m3[['beta_t']]))
-# acf(colMeans(post_m3[['beta_t']]))
-# 
-# 
-# mes = data.frame(rbind(cbind(colMeans(post_m3$beta_pd), rep('Postdoctoral', 12), seq(1,12)), 
-#                        cbind(colMeans(post_m3$beta_gr), rep('Graduate', 12), seq(1,12)), 
-#                        cbind(colMeans(post_m3$beta_tt), rep('tt', 12), seq(1,12)))) 
-# colnames(mes) = c('value', 'type', 'month')
-# mes$value = as.numeric(mes$value)
-# 
-# mes$month = factor(mes$month, levels=seq(1,12))
-# 
-# ggplot(data=mes) + geom_point(aes(x=factor(month), y=value, colour=type)) #+ scale_y_continous(breaks=)
-# 
-# 
-# #####################################################################################################################################
-# 
-# sigma = rep(0.1, 3)
-# beta_slope = rep(1, 3)
-# beta_year  = matrix(rnorm(3*all$N_years, mean=0, sd=0.5)) 
-# 
-# beta_year
-# beta_all
-# beta_month
-# sigma_beta
-# 
-# # inits = list()
-# 
-# fit_m3 <- stan(file    = 'ecolog_m8.stan', 
-#                data    = all, 
-#                iter    = 200, 
-#                chains  = 1, 
-#                control = list(max_treedepth=13, adapt_delta=0.9))
-# post_m3   <- extract(fit_m3)
-# 
-# plot(fit_m3, pars='beta')
-# plot(fit_m3, pars=paste0('beta_month[', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta[1,', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta[2,', seq(1, 12), ']'))
-# plot(fit_m3, pars=paste0('beta[3,', seq(1, 12), ']'))
-# 
-# plot(fit_m3, pars='alpha')
-# plot(fit_m3, pars='beta_slope')
-# 
-# plot(fit_m3, pars='beta_year')
-# 
-# 
-# # plot(fit_m3, pars=c('alpha_tt', 'alpha_pd', 'alpha_gr'))
-# # plot(fit_m3, pars=c('alpha_tt1', 'alpha_pd1', 'alpha_gr1'))
-# # 
-# # plot(fit_m3, pars=paste0('sigma[', seq(1, 3), ']'))
-# # plot(fit_m3, pars=paste0('beta_tt[', seq(1, 12), ']'))
-# # plot(fit_m3, pars=paste0('beta_pd[', seq(1, 12), ']'))
-# # plot(fit_m3, pars=paste0('beta_gr[', seq(1, 12), ']'))
-# 
-# pdf(file='figures/ecolog_m8.pdf', height=10, width=12)
-# par(mfrow=c(1,1))
-# plot(date, all$y_tt/all$N_tt, type='l')
-# lines(date, colMeans(post_m3[['theta_tt']]), col='blue')
-# 
-# plot(date, all$y_pd/all$N_pd, type='l')
-# lines(date, colMeans(post_m3[['theta_pd']]), col='blue')
-# 
-# plot(date, all$y_gr/all$N_gr, type='l')
-# lines(date, colMeans(post_m3[['theta_gr']]), col='blue')
-# dev.off()
-# 
-# 
-# plot(date, colMeans(post_m3[['beta_re']]), type='l')
-# plot(month,colMeans(post[['beta_t']]))
-# acf(colMeans(post[['beta_t']]))
