@@ -73,18 +73,6 @@ model {
     mu_gr[t] ~ normal(alpha_all + alpha_ind[3] + X[t] * month_ind[3] + time_ind[3][t] + (time_slope_ind[3]) * t/T, sigma[3]);
   }
 
-//    for(i in 1:3){
-//      //alpha[i] ~ normal(alpha_all, sigma_alpha);
-//      beta[i]  ~ normal(beta_all, sigma_beta);
-//      //beta_t[i]  ~ normal(beta_t_all, sigma_beta_t);
-//    }
-
-  // for(i in 1:3){
-  //    alpha[i] <- alpha_all + ;
-  //    beta[i]  ~ normal(beta_all, sigma_beta);
-  //    //beta_t[i]  ~ normal(beta_t_all, sigma_beta_t);
-  //  }
-
   for (t in 1:T){
     y_tt[t] ~ binomial(N_tt[t], theta_tt[t]);
     y_pd[t] ~ binomial(N_pd[t], theta_pd[t]);

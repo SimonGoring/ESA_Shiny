@@ -21,19 +21,19 @@ data {
 }
 parameters {
 
-  real alpha_all;
-  
-  vector[3] alpha;
-  vector[3] year_slope;
-  vector[N_years] year_effect;
+  real alpha_all;  // constant shared
+  vector[3] alpha; // constant individual
+  vector[3] year_slope;        // year slope
+  vector[N_years] year_effect; // year shared
   //vector[3] beta_quad;
   //vector[3] alpha_all;
-  
-  vector[K] beta[3];
-  //vector[K] beta_all;
-  vector[K] beta_month;
 
-  vector[N_years] year_ind[3];
+
+  vector[K] beta[3]; // month shared
+  //vector[K] beta_all;
+  vector[K] beta_month; // month individual
+  
+  vector[N_years] year_ind[3]; // year individual
   
   vector<lower=0.001>[3] sigma;
   //real<lower=0.001> sigma_beta;

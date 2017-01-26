@@ -17,20 +17,23 @@ data {
   int<lower=0> month[T]; // year 
   int<lower=0> K;        // times 
   
-  matrix<lower=0, upper=1>[T, K] X; 
+  matrix<lower=0, upper=1>[T, K] X;
 }
 parameters {
+
+  real alpha_all;
   
-  real alpha_all;  // constant shared
-  vector[3] alpha; // constant individual
-  vector[3] year_slope;        // year slope
-  vector[N_years] year_effect; // year shared
+  vector[3] alpha;
+  vector[3] year_slope;
+  vector[N_years] year_effect;
   //vector[3] beta_quad;
   //vector[3] alpha_all;
   
-  vector[K] beta[3]; // month shared
+  vector[K] beta[3];
   //vector[K] beta_all;
-  vector[K] beta_month; // month individual
+  // vector[K] beta_month;
+
+  #vector[N_years] year_shared;
   
   vector<lower=0.001>[3] sigma;
   //real<lower=0.001> sigma_beta;
@@ -52,16 +55,21 @@ transformed parameters {
 }
 model {
   
-  // priors
-  alpha ~ normal(0, 5);
-  alpha_all ~ normal(0, 5);
-
-  beta ~ normal(0, 5);
+//   // priors
+//   alpha ~ normal(0, 5);
+//   beta_tt  ~ normal(0, 5);
+  //sigma ~ cauchy(0,5);
+  //beta_t ~ normal(0, 5);
+  //beta_re ~ normal(0, 3);
   
   for (t in 1:T){
-    mu_tt[t] ~ normal(alpha_all + alpha[1] + year_slope[1] * year[t] + year_effect[year[t]] +  X[t] * beta[1] + X[t] * beta_month , sigma[1]);
-    mu_pd[t] ~ normal(alpha_all + alpha[2] + year_slope[2] * year[t] + year_effect[year[t]] + X[t] * beta[2] + X[t] * beta_month, sigma[2]);
-    mu_gr[t] ~ normal(alpha_all + alpha[3] + year_slope[3] * year[t] + year_effect[year[t]] + X[t] * beta[3] + X[t] * beta_month, sigma[3]);
+//     mu_tt[t] ~ normal(alpha[1] + beta_slope[1] * t/T + beta_quad[1] * t * t * 1.0/T * 1.0/T + X[t] * beta[1] + X[t] * beta_month , sigma[1]);
+//     mu_pd[t] ~ normal(alpha[2] + beta_slope[2] * t/T + beta_quad[2] *  t * t * 1.0/T * 1.0/T + X[t] * beta[2] + X[t] * beta_month, sigma[2]);
+//     mu_gr[t] ~ normal(alpha[3] + beta_slope[3] * t/T + beta_quad[3] * t * t * 1.0/T * 1.0/T + X[t] * beta[3] + X[t] * beta_month, sigma[3]);
+//     
+    mu_tt[t] ~ normal(alpha_all + alpha[1] + year_slope[1] * year[t] + year_effect[year[t]] + X[t] * beta[1], sigma[1]);
+    mu_pd[t] ~ normal(alpha_all + alpha[2] + year_slope[2] * year[t] + year_effect[year[t]] + X[t] * beta[2], sigma[2]);
+    mu_gr[t] ~ normal(alpha_all + alpha[3] + year_slope[3] * year[t] + year_effect[year[t]] + X[t] * beta[3], sigma[3]);
   }
 
 //    for(i in 1:3){

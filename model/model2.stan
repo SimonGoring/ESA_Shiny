@@ -21,14 +21,15 @@ data {
 }
 parameters {
 
-  real alpha_all;
-  vector[3] alpha;
+  real alpha_all; // constant shared
+  vector[3] alpha_ind; // constant ind
   
-  vector[K] beta[3];
-  //vector[K] beta_all;
-  vector[K] beta_month;
+  vector[K] month_all;    // month shared
+  vector[K] month_ind[3]; // month ind
 
-  vector[T] time_effect;
+  vector[T] time_all;     // time shared
+  vector[3] time_slope_ind;  // time slope ind
+  //real time_slope_all;           // time slope ind
   
   vector<lower=0.001>[3] sigma;
   //real<lower=0.001> sigma_beta;
@@ -58,13 +59,14 @@ model {
   //beta_re ~ normal(0, 3);
   
   for (t in 1:T){
-//     mu_tt[t] ~ normal(alpha[1] + beta_slope[1] * t/T + beta_quad[1] * t * t * 1.0/T * 1.0/T + X[t] * beta[1] + X[t] * beta_month , sigma[1]);
-//     mu_pd[t] ~ normal(alpha[2] + beta_slope[2] * t/T + beta_quad[2] *  t * t * 1.0/T * 1.0/T + X[t] * beta[2] + X[t] * beta_month, sigma[2]);
-//     mu_gr[t] ~ normal(alpha[3] + beta_slope[3] * t/T + beta_quad[3] * t * t * 1.0/T * 1.0/T + X[t] * beta[3] + X[t] * beta_month, sigma[3]);
-//     
-    mu_tt[t] ~ normal(alpha_all + alpha[1] + X[t] * beta[1] + X[t] * beta_month + time_effect[t], sigma[1]);
-    mu_pd[t] ~ normal(alpha_all + alpha[2] + X[t] * beta[2] + X[t] * beta_month + time_effect[t], sigma[2]);
-    mu_gr[t] ~ normal(alpha_all + alpha[3] + X[t] * beta[3] + X[t] * beta_month + time_effect[t], sigma[3]);
+  //   mu_tt[t] ~ normal(alpha_all + alpha_ind[1] + X[t] * month_ind[1] + X[t] * month_all + time_all[t] + (time_slope_ind[1] + time_slope_all) * t/T, sigma[1]);
+  //   mu_pd[t] ~ normal(alpha_all + alpha_ind[2] + X[t] * month_ind[2] + X[t] * month_all + time_all[t] + (time_slope_ind[2] + time_slope_all) * t/T, sigma[2]);
+  //   mu_gr[t] ~ normal(alpha_all + alpha_ind[3] + X[t] * month_ind[3] + X[t] * month_all + time_all[t] + (time_slope_ind[3] + time_slope_all) * t/T, sigma[3]);
+  // }
+
+    mu_tt[t] ~ normal(alpha_all + alpha_ind[1] + X[t] * month_ind[1] + X[t] * month_all + time_all[t] + (time_slope_ind[1]) * t/T, sigma[1]);
+    mu_pd[t] ~ normal(alpha_all + alpha_ind[2] + X[t] * month_ind[2] + X[t] * month_all + time_all[t] + (time_slope_ind[2]) * t/T, sigma[2]);
+    mu_gr[t] ~ normal(alpha_all + alpha_ind[3] + X[t] * month_ind[3] + X[t] * month_all + time_all[t] + (time_slope_ind[3]) * t/T, sigma[3]);
   }
 
 //    for(i in 1:3){
