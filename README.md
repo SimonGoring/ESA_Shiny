@@ -1,3 +1,5 @@
+[![deprecated](http://badges.github.io/stability-badges/dist/deprecated.svg)](http://github.com/badges/stability-badges)
+
 # ESA_Shiny
 
 This is a project that arose as a result of some ideas from [Goring et al., 2014](http://onlinelibrary.wiley.com/doi/10.1890/120370/pdf) on interdisciplinarity in Ecology (in particular) and, more generally, hiring pracitices in academia.
